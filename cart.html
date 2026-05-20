@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart - SokoHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="sokohub.css">
+    <style>
+        .cart-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .cart-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            color: #222;
+        }
+
+        .cart-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 24px;
+        }
+
+        .cart-items {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #f0f0f0;
+            align-items: center;
+        }
+
+        .cart-item-image {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            flex-shrink: 0;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #222;
+        }
+
+        .cart-item-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: #B11226;
+            margin-bottom: 12px;
+        }
+
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .quantity-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .quantity-btn:hover {
+            background: #f5f5f5;
+            border-color: #B11226;
+        }
+
+        .quantity-display {
+            font-weight: 600;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .remove-btn {
+            color: #B11226;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: color 0.3s ease;
+            padding: 0;
+        }
+
+        .remove-btn:hover {
+            color: #8a0d1f;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-cart-icon {
+            font-size: 80px;
+            margin-bottom: 16px;
+        }
+
+        .empty-cart-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 12px;
+        }
+
+        .empty-cart-subtext {
+            color: #999;
+            margin-bottom: 24px;
+        }
+
+        .continue-shopping-btn {
+            display: inline-block;
+            padding: 12px 32px;
+            background: #B11226;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .continue-shopping-btn:hover {
+            background: #8a0d1f;
+            transform: translateY(-2px);
+        }
+
+        .cart-summary {
+            background: #f9f9f9;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #f0f0f0;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .summary-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #222;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .summary-row.total {
+            border-top: 1px solid #e0e0e0;
+            padding-top: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 20px;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 14px;
+            background: #B11226;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            background: #8a0d1f;
+            transform: translateY(-2px);
+        }
+
+        .checkout-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 768px) {
+            .cart-container {
+                padding: 24px 16px;
+            }
+
+            .cart-content {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-summary {
+                position: static;
+                top: auto;
+            }
+
+            .cart-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .cart-item-controls {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-top">
+            <div class="logo">
+                <a href="index.html" aria-label="SokoHub home">
+                    <img src="sokohub.jpg" alt="SokoHub logo" class="site-logo">
+                </a>
+            </div>
+            <div class="header-icons">
+                <a href="login.html" class="login-link" title="Login">👤</a>
+                <span onclick="goToCart()" style="cursor: pointer;">🛒</span>
+            </div>
+        </div>
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-bar" placeholder="Search products, brands...">
+            <button class="search-btn" onclick="handleSearch()">Search</button>
+        </div>
+    </header>
+
+    <div class="page-crumb" aria-hidden="false">
+        <a href="index.html">Home</a>
+        <span class="separator">›</span>
+        <span>Cart</span>
+    </div>
+
+    <main class="cart-container">
+        <h1 class="cart-title">Shopping Cart</h1>
+        
+        <div id="emptyCartMessage" class="empty-cart">
+            <div class="empty-cart-icon">🛒</div>
+            <div class="empty-cart-text">Your cart is empty</div>
+            <div class="empty-cart-subtext">Add items to your cart to get started</div>
+            <a href="index.html" class="continue-shopping-btn">Continue Shopping</a>
+        </div>
+
+        <div id="cartContentWrapper" style="display: none;">
+            <div class="cart-content">
+                <div class="cart-items" id="cartItemsContainer"></div>
+                
+                <div class="cart-summary">
+                    <div class="summary-title">Order Summary</div>
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">Ksh 0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping:</span>
+                        <span id="shipping">Ksh 200</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Tax (10%):</span>
+                        <span id="tax">Ksh 0</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        <span id="total">Ksh 0</span>
+                    </div>
+                    <button class="checkout-btn" onclick="proceedToCheckout()">Proceed to Checkout</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- BOTTOM NAVIGATION (MOBILE) -->
+    <nav class="bottom-nav">
+        <div class="nav-item" onclick="switchNav(this, 'home')">
+            <span class="nav-icon">🏠</span>
+            <span>Home</span>
+        </div>
+        <div class="nav-item" onclick="switchNav(this, 'browse')">
+            <span class="nav-icon">🔍</span>
+            <span>Browse</span>
+        </div>
+        <div class="nav-item active" onclick="switchNav(this, 'cart')">
+            <span class="nav-icon">🛒</span>
+            <span>Cart</span>
+        </div>
+        <div class="nav-item" onclick="switchNav(this, 'saved')">
+            <span class="nav-icon">❤️</span>
+            <span>Saved</span>
+        </div>
+    </nav>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-links">
+            <a href="#about">About Us</a>
+            <a href="#contact">Contact</a>
+            <a href="#privacy">Privacy</a>
+            <a href="#terms">Terms</a>
+        </div>
+        <p class="footer-text">&copy; 2026 SokoHub. All rights reserved. | Making Shopping Easier for Murang'a</p>
+    </footer>
+
+    <script src="sokohub.js"></script>
+    <script>
+        let cart = JSON.parse(localStorage.getItem('sokohubCart')) || [];
+
+        function renderCart() {
+            const container = document.getElementById('cartItemsContainer');
+            const emptyMessage = document.getElementById('emptyCartMessage');
+            const contentWrapper = document.getElementById('cartContentWrapper');
+
+            if (cart.length === 0) {
+                emptyMessage.style.display = 'block';
+                contentWrapper.style.display = 'none';
+                return;
+            }
+
+            emptyMessage.style.display = 'none';
+            contentWrapper.style.display = 'grid';
+
+            container.innerHTML = cart.map((item, index) => `
+                <div class="cart-item">
+                    <div class="cart-item-image">${item.emoji || '📦'}</div>
+                    <div class="cart-item-details">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-price">${item.price}</div>
+                        <div class="cart-item-controls">
+                            <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">−</button>
+                            <span class="quantity-display">${item.quantity || 1}</span>
+                            <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
+                            <button class="remove-btn" onclick="removeFromCart(${index})">Remove</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            updateSummary();
+        }
+
+        function updateQuantity(index, change) {
+            if (cart[index]) {
+                cart[index].quantity = (cart[index].quantity || 1) + change;
+                if (cart[index].quantity <= 0) {
+                    removeFromCart(index);
+                } else {
+                    localStorage.setItem('sokohubCart', JSON.stringify(cart));
+                    renderCart();
+                }
+            }
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('sokohubCart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        function updateSummary() {
+            const subtotal = cart.reduce((sum, item) => {
+                const price = parseInt(item.price.replace(/[^0-9]/g, '')) || 0;
+                return sum + (price * (item.quantity || 1));
+            }, 0);
+
+            const shipping = 200;
+            const tax = Math.floor(subtotal * 0.1);
+            const total = subtotal + shipping + tax;
+
+            document.getElementById('subtotal').textContent = `Ksh ${subtotal.toLocaleString()}`;
+            document.getElementById('shipping').textContent = `Ksh ${shipping}`;
+            document.getElementById('tax').textContent = `Ksh ${tax}`;
+            document.getElementById('total').textContent = `Ksh ${total.toLocaleString()}`;
+        }
+
+        function proceedToCheckout() {
+            if (cart.length === 0) {
+                alert('Your cart is empty');
+                return;
+            }
+            alert('Proceeding to checkout... (Payment integration coming soon)');
+        }
+
+        // Override to prevent leaving cart
+        function switchNav(element, page) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            element.classList.add('active');
+            if (page !== 'cart') {
+                if (page === 'home') window.location.href = 'index.html';
+                else if (page === 'browse') window.location.href = 'devices.html';
+                else if (page === 'saved') alert('Saved items feature coming soon');
+            }
+        }
+
+        function goToCart() {
+            // Already on cart page
+        }
+
+        function toggleNotifications() {
+            alert('🔔 You have 3 new notifications');
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (query.trim()) {
+                alert('🔍 Searching for: ' + query);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCart();
+        });
+    </script>
+</body>
+</html>

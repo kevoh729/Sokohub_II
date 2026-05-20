@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion - SokoHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="sokohub.css">
+    <link rel="stylesheet" href="fashion.css">
+    <link rel="preload" href="fashion.js" as="script">
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-top">
+                <div class="logo">
+                    <a href="index.html" aria-label="SokoHub home">
+                        <img src="sokohub.jpg" alt="SokoHub logo" class="site-logo">
+                    </a>
+                </div>
+            <div class="header-icons">
+                <a href="login.html" class="login-link" title="Login">👤</a>
+                <span onclick="goToCart()" style="cursor: pointer;">🛒</span>
+            </div>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="Search fashion items...">
+            <button class="search-btn">Search</button>
+        </div>
+    </header>
+
+    <div class="page-crumb" aria-hidden="false">
+        <a href="index.html">Home</a>
+        <span class="separator">›</span>
+        <span>Fashion</span>
+    </div>
+
+    <!-- CATEGORIES SCROLL -->
+    <div class="categories" id="categoriesScroll">
+        <!-- Sub-categories -->
+        <button class="category-chip active" onclick="filterCategory(this)">All</button>
+        <button class="category-chip" onclick="filterCategory(this)">Clothing</button>
+        <button class="category-chip" onclick="filterCategory(this)">Footwear</button>
+        <button class="category-chip" onclick="filterCategory(this)">Bags & Carry</button>
+        <button class="category-chip" onclick="filterCategory(this)">Accessories</button>
+        <button class="category-chip" onclick="filterCategory(this)">Personal Care</button>
+        <button class="category-chip" onclick="filterCategory(this)">Occasion Wear</button>
+        
+        <!-- Clothing items -->
+        <button class="category-chip" onclick="filterCategory(this)">T-Shirts</button>
+        <button class="category-chip" onclick="filterCategory(this)">Hoodies</button>
+        <button class="category-chip" onclick="filterCategory(this)">Sweaters</button>
+        <button class="category-chip" onclick="filterCategory(this)">Jeans</button>
+        <button class="category-chip" onclick="filterCategory(this)">Trousers</button>
+        <button class="category-chip" onclick="filterCategory(this)">Shorts</button>
+        <button class="category-chip" onclick="filterCategory(this)">Dresses</button>
+        <button class="category-chip" onclick="filterCategory(this)">Skirts</button>
+        <button class="category-chip" onclick="filterCategory(this)">Jackets</button>
+        
+        <!-- Footwear items -->
+        <button class="category-chip" onclick="filterCategory(this)">Sneakers</button>
+        <button class="category-chip" onclick="filterCategory(this)">Casual Shoes</button>
+        <button class="category-chip" onclick="filterCategory(this)">Formal Shoes</button>
+        <button class="category-chip" onclick="filterCategory(this)">Sandals</button>
+        <button class="category-chip" onclick="filterCategory(this)">Slippers</button>
+        <button class="category-chip" onclick="filterCategory(this)">Sport Shoes</button>
+        <button class="category-chip" onclick="filterCategory(this)">Boots</button>
+        
+        <!-- Bags items -->
+        <button class="category-chip" onclick="filterCategory(this)">Backpacks</button>
+        <button class="category-chip" onclick="filterCategory(this)">Laptop Bags</button>
+        <button class="category-chip" onclick="filterCategory(this)">Tote Bags</button>
+        <button class="category-chip" onclick="filterCategory(this)">Handbags</button>
+        <button class="category-chip" onclick="filterCategory(this)">Gym Bags</button>
+        <button class="category-chip" onclick="filterCategory(this)">Travel Bags</button>
+        
+        <!-- Accessories items -->
+        <button class="category-chip" onclick="filterCategory(this)">Caps & Hats</button>
+        <button class="category-chip" onclick="filterCategory(this)">Sunglasses</button>
+        <button class="category-chip" onclick="filterCategory(this)">Belts</button>
+        <button class="category-chip" onclick="filterCategory(this)">Jewelry</button>
+        <button class="category-chip" onclick="filterCategory(this)">Bracelets</button>
+        <button class="category-chip" onclick="filterCategory(this)">Chains</button>
+        
+        <!-- Personal Care items -->
+        <button class="category-chip" onclick="filterCategory(this)">Makeup</button>
+        <button class="category-chip" onclick="filterCategory(this)">Skincare</button>
+        <button class="category-chip" onclick="filterCategory(this)">Perfumes</button>
+        <button class="category-chip" onclick="filterCategory(this)">Hair Products</button>
+        <button class="category-chip" onclick="filterCategory(this)">Nail Kits</button>
+        <button class="category-chip" onclick="filterCategory(this)">Grooming Kits</button>
+        
+        <!-- Occasion Wear items -->
+        <button class="category-chip" onclick="filterCategory(this)">Party Outfits</button>
+        <button class="category-chip" onclick="filterCategory(this)">Graduation Outfits</button>
+    </div>
+      
+    <!-- HERO BANNER -->
+    <section class="hero">
+        <h1>Fashion & Style</h1>
+        <p>Discover the latest trends in fashion</p>
+        <button class="hero-btn" onclick="shopNow()">Start Shopping</button>
+    </section>
+
+    <!-- PRODUCTS SECTION -->
+    <section class="products-section">
+        <div class="section-title">Popular Fashion Items</div>
+        <div class="products-grid" id="productsGrid">
+            <!-- Products will be generated by JavaScript -->
+        </div>
+    </section>
+
+    <!-- BOTTOM NAVIGATION (MOBILE) -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchNav(this, 'home')">
+            <span class="nav-icon">🏠</span>
+            <span>Home</span>
+        </div>
+        <div class="nav-item" onclick="switchNav(this, 'browse')">
+            <span class="nav-icon">🔍</span>
+            <span>Browse</span>
+        </div>
+        <div class="nav-item" onclick="switchNav(this, 'cart')">
+            <span class="nav-icon">🛒</span>
+            <span>Cart</span>
+        </div>
+        <div class="nav-item" onclick="switchNav(this, 'saved')">
+            <span class="nav-icon">❤️</span>
+            <span>Saved</span>
+        </div>
+    </nav>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-links">
+            <a href="#about">About Us</a>
+            <a href="#contact">Contact</a>
+            <a href="#privacy">Privacy</a>
+            <a href="#terms">Terms</a>
+        </div>
+        <p class="footer-text">&copy; 2026 SokoHub. All rights reserved. | Making Shopping Easier for Murang'a</p>
+    </footer>
+
+    <script src="sokohub.js"></script>
+    <script src="fashion.js"></script>
+</body>
+</html>

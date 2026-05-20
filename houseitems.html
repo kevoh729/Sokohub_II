@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Items - SokoHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="sokohub.css">
+    <link rel="stylesheet" href="houseitems.css">
+    <link rel="preload" href="houseitems.js" as="script">
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-top">
+            <div class="logo">
+                <a href="index.html" aria-label="SokoHub home">
+                    <img src="sokohub.jpg" alt="SokoHub logo" class="site-logo">
+                </a>
+            </div>
+            <div class="header-icons">
+                <a href="login.html" class="login-link" title="Login">👤</a>
+                <span onclick="goToCart()" style="cursor: pointer;">🛒</span>
+            </div>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="Search products, brands...">
+            <button class="search-btn">Search</button>
+        </div>
+    </header>
+
+    <div class="page-crumb" aria-hidden="false">
+        <a href="index.html">Home</a>
+        <span class="separator">›</span>
+        <span>House Items</span>
+    </div>
+
+    <!-- CATEGORIES SCROLL -->
+    <div class="categories" id="categoriesScroll">
+        <button class="category-chip active" onclick="filterCategory(this)">All</button>
+        <button class="category-chip" onclick="filterCategory(this)">Furniture</button>
+        <button class="category-chip" onclick="filterCategory(this)">Decor</button>
+    </div>
+
+    <!-- HERO BANNER -->
+    <section class="hero">
+        <h1>House items</h1>
+        <p>Comfort & Style for Your Home</p>
+        <button class="hero-btn" onclick="shopNow()">Start Shopping</button>
+    </section>
+
+    <!-- PRODUCTS SECTION -->
+    <section class="products-section">
+        <div class="section-title">House Items Products</div>
+        <div class="products-grid" id="productsGrid">
+            <!-- Beds -->
+            <div class="product-card">
+                <div class="product-image">🛏️</div>
+                <div class="product-info">
+                    <div class="product-name">Beds</div>
+                    <div class="product-price">from KES 5000</div>
+                    <button class="add-to-cart-btn">Add to Cart</button>
+                </div>
+            </div>
+
+            <!-- Mattresses -->
+            <div class="product-card">
+                <div class="product-image">🛌</div>
+                <div class="product-info">
+                    <div class="product-name">Mattresses</div>
+                    <div class="product-price">from KES 3000</div>
+                    <button class="add-to-cart-btn">Add to Cart</button>
+                </div>
+            </div>
+
+            <!-- Chairs -->
+            <div class="product-card">
+                <div class="product-image">💺</div>
+                <div class="product-info">
+                    <div class="product-name">Chairs</div>
+                    <div class="product-price">from KES 1200</div>
+                    <button class="add-to-cart-btn">Add to Cart</button>
+                </div>
+            </div>
+
+            <!-- Desks -->
+            <div class="product-card">
+                <div class="product-image">🖥️</div>
+                <div class="product-info">
+                    <div class="product-name">Desks</div>
+                    <div class="product-price">from KES 2500</div>
+                    <button class="add-to-cart-btn">Add to Cart</button>
+                </div>
+            </div>
+
+            <!-- Shelves -->
+            <div class="product-card">
+                <div class="product-image">🗄️</div>
+                <div class="product-info">
+                    <div class="product-name">Shelves</div>
+                    <div class="product-price">from KES 800</div>
+                    <button class="add-to-cart-btn">Add to Cart</button>
+                </div>
+            </div>
+
+            <!-- Curtains -->
+            <div class="product-card">
+                <div class="product-image">🪟</div>
+                <div class="product-info">
+                    <div class="product-name">Curtains</div>
+                    <div class="product-price">from KES 600</div>
+                    <button class="add-to-cart-btn">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOTTOM NAVIGATION (MOBILE) -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchNav(this, 'home')">
+            <span class="nav-icon">🏠</span>
+            <span>Home</span>
+        </div>
+        <div class="nav-item" onclick="switchNav(this, 'browse')">
+            <span class="nav-icon">🔍</span>
+            <span>Browse</span>
+        </div>
+        <div class="nav-item" onclick="switchNav(this, 'cart')">
+            <span class="nav-icon">🛒</span>
+            <span>Cart</span>
+        </div>
+        <div class="nav-item" onclick="switchNav(this, 'saved')">
+            <span class="nav-icon">❤️</span>
+            <span>Saved</span>
+        </div>
+    </nav>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-links">
+            <a href="#about">About Us</a>
+            <a href="#contact">Contact</a>
+            <a href="#privacy">Privacy</a>
+            <a href="#terms">Terms</a>
+        </div>
+        <p class="footer-text">&copy; 2026 SokoHub. All rights reserved. | Making Shopping Easier for Murang'a</p>
+    </footer>
+
+    <script src="sokohub.js"></script>
+    <script src="houseitems.js"></script>
+</body>
+</html>

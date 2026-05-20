@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product - SokoHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="sokohub.css">
+    <style>
+        .product-page { padding: 20px; max-width: 1100px; margin: 18px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .gallery-main { width:100%; height:420px; border-radius:12px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#f7f7f7; }
+        .gallery-main img { width:100%; height:100%; object-fit:contain; }
+        .thumbs { display:flex; gap:8px; margin-top:12px; }
+        .thumbs img { width:72px; height:72px; object-fit:cover; border-radius:8px; cursor:pointer; border:2px solid transparent; }
+        .thumbs img.active { border-color:#B11226; }
+        .product-details h2 { margin-bottom:8px; }
+        .product-details .price { font-size:24px; color:#B11226; font-weight:800; margin-bottom:12px; }
+        .whatsapp-btn { display:inline-flex; align-items:center; gap:8px; padding:12px 18px; background:#25D366; color:white; border-radius:10px; text-decoration:none; font-weight:700; }
+        @media (max-width:900px) { .product-page { grid-template-columns: 1fr; } .gallery-main { height:320px; } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <div class="logo">
+                <a href="index.html" aria-label="SokoHub home">
+                    <img src="sokohub.jpg" alt="SokoHub logo" class="site-logo">
+                </a>
+            </div>
+            <div class="header-icons">
+                <a href="login.html" class="login-link" title="Login">👤</a>
+                <span onclick="goToCart()" style="cursor: pointer;">🛒</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="page-crumb">
+        <a href="index.html">Home</a>
+        <span class="separator">›</span>
+        <span id="crumb-name">Product</span>
+    </div>
+
+    <main>
+        <div class="product-page">
+            <div>
+                <div class="gallery-main" id="galleryMain">
+                    <img id="mainImage" src="sokohub.jpg" alt="Product image">
+                </div>
+                <div class="thumbs" id="thumbs"></div>
+            </div>
+            <div class="product-details">
+                <h2 id="productName">Product Name</h2>
+                <div class="price" id="productPrice">Ksh 0</div>
+                <p id="productDesc">Product description will appear here.</p>
+                <div style="margin-top:18px; display:flex; gap:12px; align-items:center;">
+                    <a id="whatsappLink" class="whatsapp-btn" href="#" target="_blank">💬 Chat on WhatsApp</a>
+                    <button class="add-to-cart-btn" onclick="addToCart(document.getElementById('productName').textContent)">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Seller phone (international format without +). Replace with your number.
+        const sellerPhone = '254700000000';
+
+        function getParam(name) {
+            return new URLSearchParams(window.location.search).get(name) || '';
+        }
+
+        function setupProductFromParams() {
+            const name = decodeURIComponent(getParam('name')) || 'Product Name';
+            const price = decodeURIComponent(getParam('price')) || 'Ksh 0';
+            const desc = decodeURIComponent(getParam('desc')) || '';
+            const imagesParam = getParam('images') || '';
+            const images = imagesParam ? imagesParam.split(',').map(s => s.trim()).filter(Boolean) : ['sokohub.jpg'];
+            const defaultImages = ['sokohub.jpg','sokohub1.jpg'];
+            // Ensure there are at least 4 images (duplicate defaults if necessary)
+            while (images.length < 4) {
+                images.push(defaultImages[images.length % defaultImages.length]);
+            }
+            document.getElementById('productName').textContent = name;
+            document.getElementById('productPrice').textContent = price;
+            document.getElementById('productDesc').textContent = desc;
+            document.getElementById('crumb-name').textContent = name;
+
+            const mainImg = document.getElementById('mainImage');
+            mainImg.src = images[0];
+
+            const thumbs = document.getElementById('thumbs');
+            thumbs.innerHTML = '';
+            images.forEach((src, idx) => {
+                const img = document.createElement('img');
+                img.src = src;
+                if (idx === 0) img.classList.add('active');
+                img.addEventListener('click', () => {
+                    document.querySelectorAll('.thumbs img').forEach(t => t.classList.remove('active'));
+                    img.classList.add('active');
+                    mainImg.src = src;
+                });
+                thumbs.appendChild(img);
+            });
+
+            // WhatsApp link
+            const message = `Hello, I'm interested in ${name} priced at ${price}. Is it available?`;
+            const waUrl = `https://wa.me/${sellerPhone}?text=${encodeURIComponent(message)}`;
+            document.getElementById('whatsappLink').href = waUrl;
+        }
+
+        // Reuse existing functions if available
+        function addToCart(name) {
+            const price = document.getElementById('productPrice').textContent;
+            const emoji = '📦';
+            
+            let cart = JSON.parse(localStorage.getItem('sokohubCart')) || [];
+            const existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity = (existingItem.quantity || 1) + 1;
+            } else {
+                cart.push({ name: name, price: price, emoji: emoji, quantity: 1 });
+            }
+            
+            localStorage.setItem('sokohubCart', JSON.stringify(cart));
+            alert('✅ ' + name + ' added to cart!');
+            window.location.href = 'cart.html';
+        }
+        function toggleNotifications() { alert('🔔 You have 3 new notifications'); }
+        function goToCart() { window.location.href = 'cart.html'; }
+
+        document.addEventListener('DOMContentLoaded', setupProductFromParams);
+    </script>
+</body>
+</html>
