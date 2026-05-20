@@ -16,7 +16,7 @@
         .product-details h2 { margin-bottom:8px; }
         .product-details .price { font-size:24px; color:#B11226; font-weight:800; margin-bottom:12px; }
         .whatsapp-btn { display:inline-flex; align-items:center; gap:8px; padding:12px 18px; background:#25D366; color:white; border-radius:10px; text-decoration:none; font-weight:700; }
-        @media (max-width:900px) { .product-page { grid-template-columns: 1fr; } .gallery-main { height:320px; } }
+        @media (max-width:900px) { .product-page { grid-template-columns: repeat(2, 1fr); } .gallery-main { height:320px; } }
     </style>
 </head>
 <body>
@@ -29,7 +29,7 @@
             </div>
             <div class="header-icons">
                 <a href="login.html" class="login-link" title="Login">👤</a>
-                <span onclick="goToCart()" style="cursor: pointer;">🛒</span>
+                <a href="cart.html" class="cart-link" title="Cart">🛒</a>
             </div>
         </div>
     </header>
@@ -124,7 +124,6 @@
             alert('✅ ' + name + ' added to cart!');
             window.location.href = 'cart.html';
         }
-        function toggleNotifications() { alert('🔔 You have 3 new notifications'); }
         function goToCart() { window.location.href = 'cart.html'; }
 
         document.addEventListener('DOMContentLoaded', setupProductFromParams);

@@ -78,10 +78,6 @@
             window.location.href = 'cart.html';
         }
 
-        function toggleNotifications() {
-            alert('🔔 You have 3 new notifications');
-        }
-
         function shopNow() {
             document.getElementById('productsGrid').scrollIntoView({ behavior: 'smooth' });
         }

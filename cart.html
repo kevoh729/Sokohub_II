@@ -220,7 +220,7 @@
             }
 
             .cart-content {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
             }
 
             .cart-summary {
@@ -250,7 +250,7 @@
             </div>
             <div class="header-icons">
                 <a href="login.html" class="login-link" title="Login">👤</a>
-                <span onclick="goToCart()" style="cursor: pointer;">🛒</span>
+                <a href="cart.html" class="cart-link" title="Cart">🛒</a>
             </div>
         </div>
         <div class="search-container">
@@ -302,28 +302,7 @@
             </div>
         </div>
     </main>
-
-    <!-- BOTTOM NAVIGATION (MOBILE) -->
-    <nav class="bottom-nav">
-        <div class="nav-item" onclick="switchNav(this, 'home')">
-            <span class="nav-icon">🏠</span>
-            <span>Home</span>
-        </div>
-        <div class="nav-item" onclick="switchNav(this, 'browse')">
-            <span class="nav-icon">🔍</span>
-            <span>Browse</span>
-        </div>
-        <div class="nav-item active" onclick="switchNav(this, 'cart')">
-            <span class="nav-icon">🛒</span>
-            <span>Cart</span>
-        </div>
-        <div class="nav-item" onclick="switchNav(this, 'saved')">
-            <span class="nav-icon">❤️</span>
-            <span>Saved</span>
-        </div>
-    </nav>
-
-    <!-- FOOTER -->
+<!-- FOOTER -->
     <footer>
         <div class="footer-links">
             <a href="#about">About Us</a>
@@ -428,10 +407,6 @@
 
         function goToCart() {
             // Already on cart page
-        }
-
-        function toggleNotifications() {
-            alert('🔔 You have 3 new notifications');
         }
 
         function handleSearch() {

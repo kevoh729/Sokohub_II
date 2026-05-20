@@ -48,7 +48,8 @@
         }
 
         /* Login link / icon */
-        .login-link {
+        .login-link,
+        .cart-link {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -62,7 +63,8 @@
             font-size: 18px;
         }
 
-        .login-link:hover {
+        .login-link:hover,
+        .cart-link:hover {
             background: #f5f5f5;
             transform: translateY(-2px);
         }
@@ -617,4 +619,13 @@
         .page-crumb .separator {
             opacity: 0.6;
             font-weight: 600;
+        }
+
+        .bottom-nav {
+            display: none !important;
+        }
+
+        html,
+        body {
+            padding-bottom: 0 !important;
         }
