@@ -108,28 +108,11 @@
       color:#777;
     }
 
-    .profile{
-      display:flex;
-      align-items:center;
-      gap:15px;
-      background:white;
-      padding:10px 18px;
-      border-radius:50px;
-      box-shadow:0 5px 20px rgba(0,0,0,0.05);
-    }
-
-    .profile img{
-      width:50px;
-      height:50px;
-      border-radius:50%;
-      object-fit:cover;
-    }
-
     /* MAIN GRID */
 
     .dashboard-grid{
       display:grid;
-      grid-template-columns:minmax(0, 1.15fr) minmax(320px, 0.85fr);
+      grid-template-columns:minmax(320px, 0.85fr) minmax(0, 1.15fr);
       gap:24px;
     }
 
@@ -155,27 +138,7 @@
       font-size:28px;
     }
 
-    .add-btn{
-      padding:14px 25px;
-      border:none;
-      border-radius:50px;
-      background:linear-gradient(
-      135deg,
-      #d62828,
-      #f77f00
-      );
-
-      color:white;
-      font-weight:600;
-      cursor:pointer;
-      transition:0.3s;
-    }
-
-    .add-btn:hover{
-      transform:translateY(-4px);
-    }
-
-    .product-list{
+    .product-row{
       display:flex;
       flex-direction:column;
       gap:14px;
@@ -236,11 +199,6 @@
       transition:0.3s;
     }
 
-    .edit{
-      background:#fff4e6;
-      color:#f77f00;
-    }
-
     .delete{
       background:#fee2e2;
       color:#d62828;
@@ -248,6 +206,26 @@
 
     .action-btn:hover{
       transform:translateY(-3px);
+    }
+
+    .empty-state,
+    .form-message{
+      color:#777;
+      font-size:14px;
+    }
+
+    .form-message{
+      min-height:22px;
+      margin-top:14px;
+      font-weight:600;
+    }
+
+    .form-message.success{
+      color:#16a34a;
+    }
+
+    .form-message.error{
+      color:#d62828;
     }
 
     .product-actions{
@@ -264,7 +242,7 @@
       border-radius:22px;
       padding:24px;
       box-shadow:0 10px 30px rgba(0,0,0,0.05);
-      height:fit-content;
+      order:1;
     }
 
     .upload-panel h2{
@@ -272,44 +250,59 @@
       font-size:28px;
     }
 
+    .upload-panel form{
+      display:flex;
+      flex-direction:column;
+      gap:0;
+    }
+
     .form-group{
-      margin-bottom:20px;
+      margin-bottom:18px;
     }
 
     .form-group label{
       display:block;
       margin-bottom:10px;
       font-weight:600;
+      font-size:15px;
     }
 
     .form-group input,
     .form-group textarea,
     .form-group select{
       width:100%;
-      padding:16px;
+      padding:14px;
       border:none;
       outline:none;
-      border-radius:18px;
+      border-radius:12px;
       background:#f5f5f5;
       font-size:15px;
     }
 
     textarea{
       resize:none;
-      height:120px;
+      height:100px;
     }
 
     .upload-box{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
       width:100%;
-      padding:40px;
+      min-height:150px;
+      padding:28px 20px;
       border:2px dashed #f77f00;
-      border-radius:25px;
+      border-radius:20px;
       text-align:center;
       color:#777;
       background:#fff9f5;
       margin-bottom:20px;
       cursor:pointer;
       transition:0.3s;
+      font-size:16px;
+      line-height:1.4;
+      word-break:break-word;
     }
 
     .upload-box:hover{
@@ -318,9 +311,9 @@
 
     .publish-btn{
       width:100%;
-      padding:18px;
+      padding:16px;
       border:none;
-      border-radius:50px;
+      border-radius:12px;
 
       background:linear-gradient(
       135deg,
@@ -336,15 +329,24 @@
     }
 
     .publish-btn:hover{
-      transform:translateY(-5px);
+      transform:translateY(-3px);
+      box-shadow:0 10px 25px rgba(214,40,40,0.3);
     }
 
-    /* MOBILE */
+    .publish-btn:active{
+      transform:translateY(0);
+    }
+
+    /* TABLET & MOBILE */
 
     @media(max-width:1100px){
 
       .dashboard-grid{
         grid-template-columns:1fr;
+      }
+
+      .upload-panel{
+        order:0;
       }
 
     }
@@ -419,12 +421,6 @@
         font-size:26px;
       }
 
-      .profile{
-        width:100%;
-        justify-content:flex-start;
-        border-radius:18px;
-      }
-
       .products,
       .upload-panel{
         padding:18px;
@@ -438,10 +434,6 @@
       .section-top h2,
       .upload-panel h2{
         font-size:22px;
-      }
-
-      .add-btn{
-        width:100%;
       }
 
       .product-row{
@@ -468,7 +460,9 @@
       }
 
       .upload-box{
-        padding:26px 16px;
+        min-height:120px;
+        padding:22px 16px;
+        margin-bottom:18px;
       }
 
     }
@@ -492,19 +486,7 @@
         Dashboard
       </a>
 
-      <a href="#">
-        My Products
-      </a>
-
-      <a href="#">
-        Add Product
-      </a>
-
-      <a href="#">
-        Settings
-      </a>
-
-      <a href="#">
+      <a href="#" id="logout-link">
         Logout
       </a>
 
@@ -525,24 +507,62 @@
         <p>Manage your products and grow your business.</p>
       </div>
 
-      <div class="profile">
 
-        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000">
-
-        <div>
-          <strong>Captain Electronics</strong>
-          <p style="font-size:13px;color:#777;">
-            Verified Seller
-          </p>
-        </div>
-
-      </div>
 
     </div>
 
-    <!-- GRID -->
+    <!-- UPLOAD & PRODUCTS CONTAINER -->
 
     <div class="dashboard-grid">
+
+      <!-- UPLOAD PANEL -->
+
+      <div class="upload-panel">
+
+        <h2>Publish a Product</h2>
+
+        <form id="product-form">
+        <label class="upload-box" for="product-image">
+          📸 Click To Upload Product Image
+        </label>
+        <input id="product-image" type="file" accept="image/*" style="display:none;">
+
+        <div class="form-group">
+          <label for="product-name">Product Title</label>
+
+          <input id="product-name" type="text" placeholder="Enter product name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="product-price">Price</label>
+
+          <input id="product-price" type="number" min="0" step="0.01" placeholder="KSh 0.00" required>
+        </div>
+
+        <div class="form-group">
+          <label for="product-category">Category</label>
+
+          <select id="product-category">
+            <option>Electronics</option>
+            <option>Fashion</option>
+            <option>Furniture</option>
+            <option>Beauty</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="product-description">Description</label>
+
+          <textarea id="product-description" placeholder="Write product details..." required></textarea>
+        </div>
+
+        <button class="publish-btn" type="submit">
+          Publish Product
+        </button>
+        <div id="form-message" class="form-message"></div>
+        </form>
+
+      </div>
 
       <!-- PRODUCTS -->
 
@@ -552,104 +572,11 @@
 
           <h2>My Products</h2>
 
-          <button class="add-btn">
-            + Add Product
-          </button>
-
         </div>
 
-        <div class="product-list">
-
-          <div class="product-row">
-            <div class="product-info">
-              <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1000" alt="iPhone 15 Pro">
-              <div>
-                <strong>iPhone 15 Pro</strong>
-                <p style="color:#777;font-size:14px;">
-                  Electronics
-                </p>
-              </div>
-            </div>
-
-            <div class="product-meta">
-              <span class="price">KSh 145,000</span>
-              <span class="status">Active</span>
-            </div>
-
-            <div class="product-actions">
-              <button class="action-btn edit">Edit</button>
-              <button class="action-btn delete">Delete</button>
-            </div>
-          </div>
-
-          <div class="product-row">
-            <div class="product-info">
-              <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=1000" alt="Gaming Laptop">
-              <div>
-                <strong>Gaming Laptop</strong>
-                <p style="color:#777;font-size:14px;">
-                  Electronics
-                </p>
-              </div>
-            </div>
-
-            <div class="product-meta">
-              <span class="price">KSh 98,000</span>
-              <span class="status">Active</span>
-            </div>
-
-            <div class="product-actions">
-              <button class="action-btn edit">Edit</button>
-              <button class="action-btn delete">Delete</button>
-            </div>
-          </div>
-
+        <div class="product-list" id="product-list">
+          <div class="empty-state">Loading your products...</div>
         </div>
-
-      </div>
-
-      <!-- UPLOAD PANEL -->
-
-      <div class="upload-panel">
-
-        <h2>Upload Product</h2>
-
-        <div class="upload-box">
-          📸 Click To Upload Product Image
-        </div>
-
-        <div class="form-group">
-          <label>Product Title</label>
-
-          <input type="text" placeholder="Enter product name">
-        </div>
-
-        <div class="form-group">
-          <label>Price</label>
-
-          <input type="text" placeholder="KSh 0.00">
-        </div>
-
-        <div class="form-group">
-          <label>Category</label>
-
-          <select>
-            <option>Electronics</option>
-            <option>Fashion</option>
-            <option>Furniture</option>
-            <option>Beauty</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Description</label>
-
-          <textarea placeholder="Write product details..."></textarea>
-        </div>
-
-        <button class="publish-btn">
-          Publish Product
-        </button>
 
       </div>
 
@@ -657,5 +584,207 @@
 
   </div>
 
+  <script>
+    const token = localStorage.getItem('token');
+    let userEmail = localStorage.getItem('userEmail');
+    let userName = localStorage.getItem('userName') || 'Seller';
+    const productList = document.getElementById('product-list');
+    const productForm = document.getElementById('product-form');
+    const messageBox = document.getElementById('form-message');
+    const uploadLabel = document.querySelector('.upload-box');
+    const imageInput = document.getElementById('product-image');
+
+    function escapeHtml(value) {
+      return String(value || '').replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[char]));
+    }
+
+    function setMessage(message, type) {
+      messageBox.textContent = message;
+      messageBox.classList.remove('success', 'error');
+      messageBox.classList.add(type);
+    }
+
+    function formatPrice(value) {
+      return `KSh ${Number(value || 0).toLocaleString('en-KE')}`;
+    }
+
+    function clearSavedLogin() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userEmail');
+      localStorage.removeItem('userName');
+    }
+
+    async function requireValidSession() {
+      if (!token) {
+        window.location.replace('/goin.html');
+        return false;
+      }
+
+      const response = await fetch('/api/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        clearSavedLogin();
+        window.location.replace('/goin.html');
+        return false;
+      }
+
+      userEmail = data.email;
+      userName = data.name || userName;
+      localStorage.setItem('userEmail', userEmail);
+      localStorage.setItem('userName', userName);
+      document.querySelector('.welcome h1').textContent = `Welcome Back, ${userName}`;
+      document.querySelector('.profile strong').textContent = userName;
+      return true;
+    }
+
+    async function uploadImage(file) {
+      if (!file) return null;
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Image upload failed');
+      }
+
+      return data.imageUrl;
+    }
+
+    async function loadProducts() {
+      if (!userEmail) return;
+
+      const response = await fetch('/api/my-products', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        clearSavedLogin();
+        window.location.replace('/goin.html');
+        return;
+      }
+
+      const products = data || [];
+
+      if (!products.length) {
+        productList.innerHTML = '<div class="empty-state">No products yet. Publish your first product from the upload panel.</div>';
+        return;
+      }
+
+      productList.innerHTML = products.map((product) => `
+        <div class="product-row">
+          <div class="product-info">
+            <img src="${escapeHtml(product.image_url)}" alt="${escapeHtml(product.name)}">
+            <div>
+              <strong>${escapeHtml(product.name)}</strong>
+              <p style="color:#777;font-size:14px;">${escapeHtml(product.description)}</p>
+            </div>
+          </div>
+
+          <div class="product-meta">
+            <span class="price">${formatPrice(product.price)}</span>
+            <span class="status">Active</span>
+          </div>
+
+          <div class="product-actions">
+            <button class="action-btn delete" type="button" data-product-id="${escapeHtml(product.id)}">Delete</button>
+          </div>
+        </div>
+      `).join('');
+
+      productList.querySelectorAll('.delete').forEach((button) => {
+        button.addEventListener('click', () => deleteProduct(button.dataset.productId));
+      });
+    }
+
+    async function deleteProduct(productId) {
+      const response = await fetch(`/api/products/${encodeURIComponent(productId)}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        loadProducts();
+      }
+    }
+
+    imageInput.addEventListener('change', () => {
+      uploadLabel.textContent = imageInput.files[0] ? imageInput.files[0].name : '📸 Click To Upload Product Image';
+    });
+
+    document.getElementById('logout-link').addEventListener('click', async (event) => {
+      event.preventDefault();
+      if (token) {
+        await fetch('/api/logout', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      }
+      clearSavedLogin();
+      window.location.href = '/goin.html';
+    });
+
+    productForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const productName = document.getElementById('product-name').value.trim();
+      const price = document.getElementById('product-price').value;
+      const category = document.getElementById('product-category').value;
+      const description = document.getElementById('product-description').value.trim();
+
+      try {
+        setMessage('Publishing product...', 'success');
+        const uploadedImageUrl = await uploadImage(imageInput.files[0]);
+        const response = await fetch('/api/products', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            name: productName,
+            price,
+            category,
+            description,
+            image_url: uploadedImageUrl
+          })
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to publish product');
+        }
+
+        productForm.reset();
+        uploadLabel.textContent = '📸 Click To Upload Product Image';
+        setMessage('Product published successfully.', 'success');
+        loadProducts();
+      } catch (error) {
+        setMessage(error.message, 'error');
+      }
+    });
+
+    requireValidSession().then((isValid) => {
+      if (isValid) {
+        loadProducts();
+      }
+    });
+  </script>
 </body>
 </html>

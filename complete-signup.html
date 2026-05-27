@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Signup - SokoHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="sokohub.css">
+  <style>
+    body {
+      min-height: 100vh;
+      background: #f6f7f9;
+    }
+    .auth-shell {
+      width: min(480px, calc(100% - 32px));
+      margin: 48px auto;
+      background: white;
+      border: 1px solid #f0f0f0;
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+    }
+    .form-field {
+      margin-bottom: 16px;
+    }
+    .form-field label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .form-field input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font: inherit;
+    }
+    .form-field input[readonly] {
+      background: #f8f8f8;
+    }
+    .auth-submit {
+      width: 100%;
+      padding: 14px;
+      border: 0;
+      border-radius: 8px;
+      background: #B11226;
+      color: white;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .auth-message {
+      min-height: 22px;
+      margin-top: 14px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .auth-message.success { color: #16803a; }
+    .auth-message.error { color: #B11226; }
+  </style>
+</head>
+<body>
+  <main class="auth-shell">
+    <h2 style="margin-bottom: 8px;">Complete your seller profile</h2>
+    <p style="margin-bottom: 20px; color: #666;">Enter your WhatsApp number so we can finish setting up your account.</p>
+
+    <form id="complete-signup-form">
+      <div class="form-field">
+        <label for="complete-email">Email</label>
+        <input id="complete-email" type="email" readonly>
+      </div>
+
+      <div class="form-field">
+        <label for="complete-name">Name</label>
+        <input id="complete-name" type="text" readonly>
+      </div>
+
+      <div class="form-field">
+        <label for="complete-whatsapp">WhatsApp Number</label>
+        <input id="complete-whatsapp" type="tel" placeholder="+254712345678" pattern="^\+?[0-9]{7,15}$" required>
+      </div>
+
+      <button class="auth-submit" type="submit">Complete Signup</button>
+      <div id="complete-message" class="auth-message"></div>
+    </form>
+  </main>
+
+  <script>
+    const tempToken = localStorage.getItem('tempToken');
+    const tempEmail = localStorage.getItem('tempEmail');
+    const tempName = localStorage.getItem('tempName');
+    const emailInput = document.getElementById('complete-email');
+    const nameInput = document.getElementById('complete-name');
+    const messageEl = document.getElementById('complete-message');
+
+    function setMessage(message, type) {
+      messageEl.textContent = message;
+      messageEl.classList.remove('success', 'error');
+      messageEl.classList.add(type);
+    }
+
+    function isValidWhatsApp(value) {
+      return /^\+?[0-9]{7,15}$/.test(value);
+    }
+
+    if (!tempToken || !tempEmail || !tempName) {
+      window.location.href = '/login.html';
+    } else {
+      emailInput.value = tempEmail;
+      nameInput.value = tempName;
+    }
+
+    document.getElementById('complete-signup-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const whatsapp = document.getElementById('complete-whatsapp').value.trim();
+
+      if (!isValidWhatsApp(whatsapp)) {
+        setMessage('Enter a valid WhatsApp number', 'error');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/auth/complete-signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tempToken, name: tempName, whatsapp })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Unable to complete signup');
+        }
+
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('sellerId', data.sellerId);
+        localStorage.setItem('userEmail', tempEmail);
+        localStorage.setItem('userName', tempName);
+        localStorage.removeItem('tempToken');
+        localStorage.removeItem('tempEmail');
+        localStorage.removeItem('tempName');
+
+        setMessage('Signup complete! Redirecting to dashboard...', 'success');
+        setTimeout(() => {
+          window.location.href = '/server_dashboard.html';
+        }, 1000);
+      } catch (err) {
+        setMessage(err.message, 'error');
+      }
+    });
+  </script>
+</body>
+</html>

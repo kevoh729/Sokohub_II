@@ -1,0 +1,31 @@
+{
+  "name": "sokohub-backend",
+  "version": "1.0.0",
+  "description": "SokoHub sellers platform backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "PORT=5500 node server.js",
+    "dev": "PORT=5500 nodemon server.js"
+  },
+  "keywords": [
+    "sokohub",
+    "sellers",
+    "platform"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cloudinary": "^2.10.0",
+    "cors": "^2.8.6",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.2",
+    "google-auth-library": "^10.6.2",
+    "multer": "^1.4.5-lts.1",
+    "multer-storage-cloudinary": "^2.2.1",
+    "pg": "^8.21.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

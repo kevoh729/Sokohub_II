@@ -1,4 +1,4 @@
- const products = [
+ const defaultProducts = [
             { name: 'Wireless Earbuds', price: 'Ksh 2,500', emoji: '🎧', description: 'Comfortable true wireless earbuds with long battery life.', images: ['sokohub1.jpg','sokohub.jpg'] },
             { name: 'Smart Watch', price: 'Ksh 5,999', emoji: '⌚', description: 'Smart watch with heart-rate monitoring and notifications.', images: ['sokohub1.jpg'] },
             { name: 'Phone Case', price: 'Ksh 800', emoji: '📱', description: 'Durable phone case to protect your device.', images: ['sokohub.jpg'] },
@@ -8,6 +8,47 @@
             { name: 'Sunglasses', price: 'Ksh 2,800', emoji: '😎', description: 'UV protection sunglasses with modern frame.', images: ['sokohub.jpg'] },
             { name: 'Beanie', price: 'Ksh 1,200', emoji: '🧢', description: 'Cozy beanie to keep you warm.', images: ['sokohub1.jpg'] }
         ];
+
+        let products = [...defaultProducts];
+
+        function escapeHtml(value) {
+            return String(value || '').replace(/[&<>"']/g, (char) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
+        }
+
+        function formatSellerProduct(product) {
+            const price = Number(product.price || 0);
+
+            return {
+                name: product.productName,
+                price: `Ksh ${price.toLocaleString('en-KE')}`,
+                emoji: '📦',
+                description: product.description || '',
+                images: product.imageUrl ? [product.imageUrl] : ['sokohub.jpg']
+            };
+        }
+
+        async function loadSellerProducts() {
+            try {
+                const response = await fetch('/api/products');
+
+                if (!response.ok) {
+                    return;
+                }
+
+                const data = await response.json();
+                const sellerProducts = (data.products || []).map(formatSellerProduct);
+                products = [...sellerProducts, ...defaultProducts];
+                renderProducts();
+            } catch (error) {
+                console.log('Seller products unavailable:', error);
+            }
+        }
 
         // Render products
         function openProduct(prod) {
@@ -21,16 +62,34 @@
 
         function renderProducts() {
             const grid = document.getElementById('productsGrid');
-            grid.innerHTML = products.map((prod) => `
-                <div class="product-card" onclick='openProduct(${JSON.stringify(prod)})'>
-                    <div class="product-image">${prod.emoji}</div>
+            if (!grid) return;
+
+            grid.innerHTML = products.map((prod, index) => `
+                <div class="product-card" data-product-index="${index}">
+                    <div class="product-image">
+                        ${prod.images && prod.images[0] ? `<img src="${escapeHtml(prod.images[0])}" alt="${escapeHtml(prod.name)}">` : escapeHtml(prod.emoji)}
+                    </div>
                     <div class="product-info">
-                        <div class="product-name">${prod.name}</div>
-                        <div class="product-price">${prod.price}</div>
-                        <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${prod.name.replace(/'/g, "\\'")}', '${prod.price}', '${prod.emoji}')">Add to Cart</button>
+                        <div class="product-name">${escapeHtml(prod.name)}</div>
+                        <div class="product-price">${escapeHtml(prod.price)}</div>
+                        <button class="add-to-cart-btn" data-cart-index="${index}">Add to Cart</button>
                     </div>
                 </div>
             `).join('');
+
+            grid.querySelectorAll('.product-card').forEach((card) => {
+                card.addEventListener('click', () => {
+                    openProduct(products[Number(card.dataset.productIndex)]);
+                });
+            });
+
+            grid.querySelectorAll('.add-to-cart-btn').forEach((button) => {
+                button.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    const product = products[Number(button.dataset.cartIndex)];
+                    addToCart(product.name, product.price, product.emoji || '📦');
+                });
+            });
         }
 
         // Filter categories
@@ -85,4 +144,5 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             renderProducts();
+            loadSellerProducts();
         });
