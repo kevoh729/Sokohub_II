@@ -345,7 +345,7 @@ app.get('/complete-signup.html', (req, res) => {
 });
 
 const PORT = 5500;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📡 Health check: http://localhost:${PORT}/api/health`);
 });
