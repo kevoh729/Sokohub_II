@@ -12,7 +12,17 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+// CORS configuration - allow Netlify and Railway domains
+app.use(cors({
+    origin: [
+        'https://sokohubii-production.up.railway.app',
+        'https://s0k0hub.netlify.app',
+        'http://localhost:3000'
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname)));
 
