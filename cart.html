@@ -29,10 +29,21 @@
         .empty-icon { font-size: 64px; margin-bottom: 16px; }
         .empty-text { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
         .empty-sub { color: #888; margin-bottom: 20px; }
-        @media (max-width: 600px) {
-            .cart-card { flex-wrap: wrap; }
-            .remove-btn { width: 100%; text-align: center; margin-top: 8px; }
-            .cart-header { flex-direction: column; gap: 16px; align-items: flex-start; }
+        @media (max-width: 768px) {
+            .cart-card { flex-wrap: wrap; padding: 12px; }
+            .cart-emoji { width: 50px; height: 50px; font-size: 36px; }
+            .cart-name { font-size: 14px; }
+            .cart-price { font-size: 14px; }
+            .remove-btn { width: 100%; text-align: center; margin-top: 8px; padding: 8px; }
+            .cart-header { flex-direction: column; gap: 12px; align-items: flex-start; }
+            .cart-title { font-size: 24px; }
+            .cart-wrapper { margin: 20px auto; }
+        }
+        
+        @media (max-width: 480px) {
+            .cart-card { flex-direction: column; text-align: center; }
+            .cart-qty { justify-content: center; }
+            .remove-btn { margin-left: 0; }
         }
     </style>
 </head>

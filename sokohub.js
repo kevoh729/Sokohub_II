@@ -1,5 +1,14 @@
 let products = [];
 
+// API Base URL - Change this to your Railway URL when hosting
+const API_BASE = 'https://sokohubii-production.up.railway.app'; 
+
+// Helper for API calls
+async function apiCall(endpoint, options = {}) {
+    const url = API_BASE + endpoint;
+    return fetch(url, options);
+}
+
 function escapeHtml(value) {
     return String(value || '').replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 }
@@ -27,7 +36,7 @@ function formatSellerProduct(product) {
 
 async function loadSellerProducts() {
     try {
-        const response = await fetch('/api/products');
+        const response = await apiCall('/api/products');
         if (response.ok) {
             const data = await response.json();
             products = (data || []).map(formatSellerProduct);

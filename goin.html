@@ -12,6 +12,14 @@
   <style>
     body { min-height: 100vh; background: #f6f7f9; }
     .auth-shell { width: min(480px, calc(100% - 32px)); margin: 48px auto; background: white; border: 1px solid #f0f0f0; border-radius: 8px; padding: 28px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06); }
+    @media (max-width: 480px) {
+        .auth-shell { margin: 24px auto; padding: 20px; }
+        .auth-tabs { margin-bottom: 16px; }
+        .auth-tab { padding: 10px; font-size: 14px; }
+        .form-field { margin-bottom: 12px; }
+        .form-field input { padding: 10px; }
+        .auth-submit { padding: 12px; }
+    }
     .auth-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 24px; }
     .auth-tab { border: 1px solid #e5e5e5; background: #f8f8f8; border-radius: 8px; padding: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
     .auth-tab.active { background: #B11226; border-color: #B11226; color: white; }
@@ -86,6 +94,9 @@
   </main>
   
   <script>
+    // Change this to your Railway URL when hosting
+    const API_BASE = 'https://sokohubii-production.up.railway.app';
+    
     const GOOGLE_CLIENT_ID = '874860608695-tnutaoj7mdpa2mp2547fubiucjbq1ihm.apps.googleusercontent.com';
     
     function showForm(formName) { 
