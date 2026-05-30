@@ -7,126 +7,347 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="sokohub.css">
     <style>
-        .product-page { padding: 20px; max-width: 1100px; margin: 18px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        .gallery-main { width:100%; height:420px; border-radius:12px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#f7f7f7; }
-        .gallery-main img { width:100%; height:100%; object-fit:contain; }
-        .thumbs { display:flex; gap:8px; margin-top:12px; }
-        .thumbs img { width:72px; height:72px; object-fit:cover; border-radius:8px; cursor:pointer; border:2px solid transparent; }
-        .thumbs img.active { border-color:#B11226; }
-        .product-details h2 { margin-bottom:8px; }
-        .product-details .price { font-size:24px; color:#B11226; font-weight:800; margin-bottom:12px; }
-        .whatsapp-btn { display:inline-flex; align-items:center; gap:8px; padding:12px 18px; background:#25D366; color:white; border-radius:10px; text-decoration:none; font-weight:700; }
-        @media (max-width:900px) { .product-page { grid-template-columns: repeat(2, 1fr); } .gallery-main { height:320px; } }
+        body { background: #f6f7f9; }
+        .product-container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        .product-image-wrapper {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 100px;
+        }
+        .main-image {
+            width: 100%;
+            height: 400px;
+            border-radius: 12px;
+            background: #f8f8f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .main-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .thumbnails {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .thumb {
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
+            background: #f8f8f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid transparent;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+        .thumb:hover, .thumb.active {
+            border-color: #B11226;
+        }
+        .thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .product-details {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .product-header {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        .product-header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        .product-price {
+            font-size: 36px;
+            font-weight: 800;
+            color: #B11226;
+            margin-bottom: 12px;
+        }
+        .product-category {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: #fef2f2;
+            color: #B11226;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .product-description {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        .product-description h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        .product-description p {
+            color: #555;
+            line-height: 1.8;
+            font-size: 15px;
+        }
+        .seller-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 2px solid #25D366;
+        }
+        .seller-card h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        .seller-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .seller-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #B11226, #f77f00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .seller-info-text strong {
+            display: block;
+            font-size: 18px;
+            color: #222;
+            margin-bottom: 4px;
+        }
+        .seller-info-text span { color: #888; font-size: 14px; }
+        .whatsapp-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px 24px;
+            background: #25D366;
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        }
+        .whatsapp-btn:hover {
+            background: #1da851;
+            transform: translateY(-2px);
+        }
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .back-btn:hover { color: #B11226; }
+        @media (max-width: 900px) {
+            .product-container { grid-template-columns: 1fr; gap: 24px; }
+            .product-image-wrapper { position: static; }
+            .main-image { height: 300px; }
+            .product-header h1 { font-size: 22px; }
+            .product-price { font-size: 28px; }
+        }
     </style>
 </head>
 <body>
     <header>
         <div class="header-top">
-            <div class="logo">
-                <a href="index.html" aria-label="SokoHub home">
-                    <img src="sokohub.jpg" alt="SokoHub logo" class="site-logo">
-                </a>
-            </div>
+            <div class="logo"><a href="index.html"><img src="sokohub.jpg" alt="SokoHub logo" class="site-logo"></a></div>
             <div class="header-icons">
-                <a href="goin.html" class="login-link" title="Login">👤</a>
-                <a href="cart.html" class="cart-link" title="Cart">🛒</a>
+                <a href="goin.html" class="header-btn account-btn">Account</a>
+                <a href="cart.html" class="header-btn cart-btn">Cart <span id="cartCount" class="cart-badge"></span></a>
             </div>
         </div>
     </header>
 
-    <div class="page-crumb">
-        <a href="index.html">Home</a>
-        <span class="separator">›</span>
-        <span id="crumb-name">Product</span>
+    <div style="max-width: 1100px; margin: 0 auto; padding: 20px 20px 0;">
+        <a href="index.html" class="back-btn">← Back to Products</a>
     </div>
 
-    <main>
-        <div class="product-page">
-            <div>
-                <div class="gallery-main" id="galleryMain">
-                    <img id="mainImage" src="sokohub.jpg" alt="Product image">
-                </div>
-                <div class="thumbs" id="thumbs"></div>
+    <main class="product-container">
+        <div class="product-image-wrapper">
+            <div class="main-image" id="mainImage">
+                <img id="productImage" src="sokohub.jpg" alt="Product">
             </div>
-            <div class="product-details">
-                <h2 id="productName">Product Name</h2>
-                <div class="price" id="productPrice">Ksh 0</div>
-                <p id="productDesc">Product description will appear here.</p>
-                <div style="margin-top:18px; display:flex; gap:12px; align-items:center;">
-                    <a id="whatsappLink" class="whatsapp-btn" href="#" target="_blank">💬 Chat on WhatsApp</a>
-                    <button class="add-to-cart-btn" onclick="addToCart(document.getElementById('productName').textContent)">Add to Cart</button>
+            <div class="thumbnails" id="thumbnails"></div>
+        </div>
+
+        <div class="product-details">
+            <div class="product-header">
+                <h1 id="productName">Product Name</h1>
+                <div class="product-price" id="productPrice">Ksh 0</div>
+                <span class="product-category" id="productCategory">📁 Category</span>
+            </div>
+
+            <div class="product-description">
+                <h3>About This Product</h3>
+                <p id="productDesc">No description available.</p>
+            </div>
+
+            <div class="seller-card">
+                <h3>Contact Seller</h3>
+                <div class="seller-info">
+                    <div class="seller-avatar" id="sellerInitial">S</div>
+                    <div class="seller-info-text">
+                        <strong id="sellerName">Seller Name</strong>
+                        <span id="sellerPhone">+254...</span>
+                    </div>
                 </div>
+                <a id="whatsappLink" class="whatsapp-btn" href="#" target="_blank">
+                    <span>💬</span>
+                    <span>Chat on WhatsApp</span>
+                </a>
             </div>
         </div>
     </main>
 
+    <footer>
+        <div class="footer-links">
+            <a href="#about">About Us</a>
+            <a href="#contact">Contact</a>
+            <a href="#privacy">Privacy</a>
+            <a href="#terms">Terms</a>
+        </div>
+        <p class="footer-text">&copy; 2026 SokoHub. All rights reserved.</p>
+    </footer>
+
     <script>
-        // Seller phone (international format without +). Replace with your number.
-        const sellerPhone = '254700000000';
+        let productImages = [];
+        let currentImageIndex = 0;
 
         function getParam(name) {
             return new URLSearchParams(window.location.search).get(name) || '';
         }
 
-        function setupProductFromParams() {
-            const name = decodeURIComponent(getParam('name')) || 'Product Name';
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('sokohubCart')) || [];
+            const count = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+            const el = document.getElementById('cartCount');
+            if (el) el.textContent = count > 0 ? count : '';
+        }
+
+        function setMainImage(index) {
+            currentImageIndex = index;
+            const mainImg = document.getElementById('productImage');
+            mainImg.src = productImages[index];
+            
+            document.querySelectorAll('.thumb').forEach((thumb, i) => {
+                thumb.classList.toggle('active', i === index);
+            });
+        }
+
+        function setupProduct() {
+            try {
+            const name = decodeURIComponent(getParam('name')) || 'Product';
             const price = decodeURIComponent(getParam('price')) || 'Ksh 0';
-            const desc = decodeURIComponent(getParam('desc')) || '';
+            const desc = decodeURIComponent(getParam('desc')) || 'No description available.';
+            const category = decodeURIComponent(getParam('category')) || '';
             const imagesParam = getParam('images') || '';
-            const images = imagesParam ? imagesParam.split(',').map(s => s.trim()).filter(Boolean) : ['sokohub.jpg'];
-            const defaultImages = ['sokohub.jpg','sokohub1.jpg'];
-            // Ensure there are at least 4 images (duplicate defaults if necessary)
-            while (images.length < 4) {
-                images.push(defaultImages[images.length % defaultImages.length]);
-            }
+            const whatsapp = getParam('whatsapp') || '';
+            const seller = decodeURIComponent(getParam('seller')) || 'SokoHub Seller';
+
+            // Parse multiple images
+            productImages = imagesParam ? imagesParam.split(',').filter(img => img.trim()) : ['sokohub.jpg'];
+            if (productImages.length === 0) productImages = ['sokohub.jpg'];
+
             document.getElementById('productName').textContent = name;
             document.getElementById('productPrice').textContent = price;
             document.getElementById('productDesc').textContent = desc;
-            document.getElementById('crumb-name').textContent = name;
 
-            const mainImg = document.getElementById('mainImage');
-            mainImg.src = images[0];
-
-            const thumbs = document.getElementById('thumbs');
-            thumbs.innerHTML = '';
-            images.forEach((src, idx) => {
-                const img = document.createElement('img');
-                img.src = src;
-                if (idx === 0) img.classList.add('active');
-                img.addEventListener('click', () => {
-                    document.querySelectorAll('.thumbs img').forEach(t => t.classList.remove('active'));
-                    img.classList.add('active');
-                    mainImg.src = src;
-                });
-                thumbs.appendChild(img);
-            });
-
-            // WhatsApp link
-            const message = `Hello, I'm interested in ${name} priced at ${price}. Is it available?`;
-            const waUrl = `https://wa.me/${sellerPhone}?text=${encodeURIComponent(message)}`;
-            document.getElementById('whatsappLink').href = waUrl;
-        }
-
-        // Reuse existing functions if available
-        function addToCart(name) {
-            const price = document.getElementById('productPrice').textContent;
-            const emoji = '📦';
-            
-            let cart = JSON.parse(localStorage.getItem('sokohubCart')) || [];
-            const existingItem = cart.find(item => item.name === name);
-            if (existingItem) {
-                existingItem.quantity = (existingItem.quantity || 1) + 1;
+            if (category) {
+                document.getElementById('productCategory').textContent = '📁 ' + category;
             } else {
-                cart.push({ name: name, price: price, emoji: emoji, quantity: 1 });
+                document.getElementById('productCategory').style.display = 'none';
             }
-            
-            localStorage.setItem('sokohubCart', JSON.stringify(cart));
-            alert('✅ ' + name + ' added to cart!');
-            window.location.href = 'cart.html';
-        }
-        function goToCart() { window.location.href = 'cart.html'; }
 
-        document.addEventListener('DOMContentLoaded', setupProductFromParams);
+            // Set main image
+            document.getElementById('productImage').src = productImages[0];
+
+            // Create thumbnails
+            const thumbsContainer = document.getElementById('thumbnails');
+            thumbsContainer.innerHTML = productImages.map((img, i) => `
+                <div class="thumb ${i === 0 ? 'active' : ''}" onclick="setMainImage(${i})">
+                    <img src="${img}" alt="Image ${i + 1}">
+                </div>
+            `).join('');
+
+            // Handle image error
+            document.getElementById('productImage').onerror = function() {
+                this.style.display = 'none';
+                document.getElementById('mainImage').innerHTML = '<span style="font-size:100px">📦</span>';
+            };
+
+            document.getElementById('sellerName').textContent = seller;
+            document.getElementById('sellerPhone').textContent = whatsapp || 'Contact via WhatsApp';
+            document.getElementById('sellerInitial').textContent = seller.charAt(0).toUpperCase();
+
+            if (whatsapp) {
+                const message = `Hello! I'm interested in "${name}" (${price}) listed on SokoHub. Is it still available?`;
+                document.getElementById('whatsappLink').href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(message)}`;
+            } else {
+                document.getElementById('whatsappLink').style.display = 'none';
+            }
+            } catch (err) {
+                console.error('Error loading product:', err);
+                document.getElementById('productName').textContent = 'Product not found';
+                document.getElementById('productDesc').textContent = 'Unable to load product details. Please go back and try again.';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCartCount();
+            setupProduct();
+        });
     </script>
 </body>
 </html>

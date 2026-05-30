@@ -3,27 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Complete Signup - SokoHub</title>
+  <title>Complete Your Profile - SokoHub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="sokohub.css">
+  <script src="https://unpkg.com/@clerk/clerk-js@latest/dist/clerk.development.js" async></script>
   <style>
     body {
       min-height: 100vh;
       background: #f6f7f9;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
-    .auth-shell {
+    .signup-shell {
       width: min(480px, calc(100% - 32px));
-      margin: 48px auto;
       background: white;
       border: 1px solid #f0f0f0;
-      border-radius: 12px;
+      border-radius: 8px;
       padding: 28px;
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
     }
+    .signup-shell h2 {
+      margin-bottom: 6px;
+    }
+    .signup-shell p {
+      margin-bottom: 20px;
+      color: #666;
+    }
     .form-field {
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
     .form-field label {
       display: block;
@@ -37,117 +48,91 @@
       border: 1px solid #ddd;
       font: inherit;
     }
-    .form-field input[readonly] {
-      background: #f8f8f8;
-    }
-    .auth-submit {
+    .submit-btn {
       width: 100%;
-      padding: 14px;
+      padding: 13px;
       border: 0;
       border-radius: 8px;
       background: #B11226;
       color: white;
       font-weight: 800;
       cursor: pointer;
-      margin-top: 8px;
+      margin-top: 4px;
     }
-    .auth-message {
+    .form-message {
       min-height: 22px;
       margin-top: 14px;
       font-size: 14px;
       font-weight: 600;
     }
-    .auth-message.success { color: #16803a; }
-    .auth-message.error { color: #B11226; }
+    .form-message.success { color: #16803a; }
+    .form-message.error { color: #B11226; }
   </style>
 </head>
 <body>
-  <main class="auth-shell">
-    <h2 style="margin-bottom: 8px;">Complete your seller profile</h2>
-    <p style="margin-bottom: 20px; color: #666;">Enter your WhatsApp number so we can finish setting up your account.</p>
-
+  <div class="signup-shell">
+    <h2>Complete Your Profile</h2>
+    <p>Please provide your WhatsApp number to complete registration.</p>
     <form id="complete-signup-form">
       <div class="form-field">
-        <label for="complete-email">Email</label>
-        <input id="complete-email" type="email" readonly>
+        <label for="name">Full Name</label>
+        <input id="name" type="text" required>
       </div>
-
       <div class="form-field">
-        <label for="complete-name">Name</label>
-        <input id="complete-name" type="text" readonly>
+        <label for="email">Email</label>
+        <input id="email" type="email" required>
       </div>
-
       <div class="form-field">
-        <label for="complete-whatsapp">WhatsApp Number</label>
-        <input id="complete-whatsapp" type="tel" placeholder="+254712345678" pattern="^\+?[0-9]{7,15}$" required>
+        <label for="whatsapp">WhatsApp Number</label>
+        <input id="whatsapp" type="tel" placeholder="+254712345678" required>
       </div>
-
-      <button class="auth-submit" type="submit">Complete Signup</button>
-      <div id="complete-message" class="auth-message"></div>
+      <button class="submit-btn" type="submit">Complete Registration</button>
+      <div id="form-message" class="form-message"></div>
     </form>
-  </main>
-
+  </div>
   <script>
     const tempToken = localStorage.getItem('tempToken');
     const tempEmail = localStorage.getItem('tempEmail');
     const tempName = localStorage.getItem('tempName');
-    const emailInput = document.getElementById('complete-email');
-    const nameInput = document.getElementById('complete-name');
-    const messageEl = document.getElementById('complete-message');
-
+    document.getElementById('name').value = tempName || '';
+    document.getElementById('email').value = tempEmail || '';
+    if (!tempToken) {
+      window.location.href = '/goin.html';
+    }
     function setMessage(message, type) {
-      messageEl.textContent = message;
-      messageEl.classList.remove('success', 'error');
-      messageEl.classList.add(type);
+      const msgEl = document.getElementById('form-message');
+      msgEl.textContent = message;
+      msgEl.classList.remove('success', 'error');
+      msgEl.classList.add(type);
     }
-
-    function isValidWhatsApp(value) {
-      return /^\+?[0-9]{7,15}$/.test(value);
-    }
-
-    if (!tempToken || !tempEmail || !tempName) {
-      window.location.href = '/login.html';
-    } else {
-      emailInput.value = tempEmail;
-      nameInput.value = tempName;
-    }
-
     document.getElementById('complete-signup-form').addEventListener('submit', async (event) => {
       event.preventDefault();
-      const whatsapp = document.getElementById('complete-whatsapp').value.trim();
-
-      if (!isValidWhatsApp(whatsapp)) {
+      const name = document.getElementById('name').value.trim();
+      const whatsapp = document.getElementById('whatsapp').value.trim();
+      if (!/^\+?[0-9]{7,15}$/.test(whatsapp)) {
         setMessage('Enter a valid WhatsApp number', 'error');
         return;
       }
-
       try {
+        setMessage('Completing registration...', 'success');
         const response = await fetch('/api/auth/complete-signup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tempToken, name: tempName, whatsapp })
+          body: JSON.stringify({ tempToken, name, whatsapp })
         });
-
         const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || 'Unable to complete signup');
-        }
-
+        if (!response.ok) throw new Error(data.error || 'Registration failed');
         localStorage.setItem('token', data.token);
         localStorage.setItem('sellerId', data.sellerId);
         localStorage.setItem('userEmail', tempEmail);
-        localStorage.setItem('userName', tempName);
+        localStorage.setItem('userName', name);
         localStorage.removeItem('tempToken');
         localStorage.removeItem('tempEmail');
         localStorage.removeItem('tempName');
-
-        setMessage('Signup complete! Redirecting to dashboard...', 'success');
-        setTimeout(() => {
-          window.location.href = '/server_dashboard.html';
-        }, 1000);
-      } catch (err) {
-        setMessage(err.message, 'error');
+        setMessage('Registration successful! Redirecting...', 'success');
+        window.location.href = '/server_dashboard.html';
+      } catch (error) {
+        setMessage(error.message, 'error');
       }
     });
   </script>
