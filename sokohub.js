@@ -106,7 +106,7 @@ function showToast(message) {
     setTimeout(() => toast.remove(), 3000);
 }
 
-function addToCart(productName, price, emoji) {
+function addToCart(productName, price, emoji, product) {
     try {
         let cart = JSON.parse(localStorage.getItem('sokohubCart')) || [];
         if (!Array.isArray(cart)) cart = [];
@@ -115,7 +115,17 @@ function addToCart(productName, price, emoji) {
         if (existing) {
             existing.quantity = (existing.quantity || 1) + 1;
         } else {
-            cart.push({ name: productName, price: price, emoji: emoji, quantity: 1 });
+            const itemData = {
+                name: productName,
+                price: price,
+                emoji: emoji,
+                images: product?.images || ['sokohub.jpg'],
+                description: product?.description || '',
+                whatsapp: product?.whatsapp || '',
+                category: product?.category || '',
+                quantity: 1
+            };
+            cart.push(itemData);
         }
         localStorage.setItem('sokohubCart', JSON.stringify(cart));
         showToast('Added to cart!');

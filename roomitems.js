@@ -22,7 +22,17 @@ async function loadProducts() {
 
 function openProduct(prod) { const params = new URLSearchParams(); params.set('name', prod.name); params.set('price', prod.price); params.set('desc', prod.description || ''); params.set('images', (prod.images || []).join(',')); params.set('category', prod.category || 'Room Items'); if (prod.whatsapp) params.set('whatsapp', prod.whatsapp); window.location.href = 'product.html?' + params.toString(); }
 
-function addToCart(productName, price, emoji) { let cart = JSON.parse(localStorage.getItem('sokohubCart')) || []; const existing = cart.find(i => i.name === productName); if (existing) existing.quantity++; else cart.push({ name: productName, price, emoji, quantity: 1 }); localStorage.setItem('sokohubCart', JSON.stringify(cart)); showToast('Added to cart!'); updateCartCount(); }
+function addToCart(productName, price, emoji, product) { let cart = JSON.parse(localStorage.getItem('sokohubCart')) || []; const existing = cart.find(i => i.name === productName); if (existing) existing.quantity++; else const itemData = {
+                name: productName,
+                price: price,
+                emoji: emoji,
+                images: product?.images || ['sokohub.jpg'],
+                description: product?.description || '',
+                whatsapp: product?.whatsapp || '',
+                category: product?.category || '',
+                quantity: 1
+            };
+            cart.push(itemData); localStorage.setItem('sokohubCart', JSON.stringify(cart)); showToast('Added to cart!'); updateCartCount(); }
 
 function updateCartCount() { const cart = JSON.parse(localStorage.getItem('sokohubCart')) || []; const count = cart.reduce((s, i) => s + (i.quantity || 1), 0); const el = document.getElementById('cartCount'); if (el) el.textContent = count > 0 ? count : ''; }
 
@@ -34,7 +44,7 @@ function renderProducts() {
     const grid = document.getElementById('productsGrid');
     if (!grid) return;
     if (products.length === 0) { grid.innerHTML = '<p style="text-align:center;padding:40px;color:#888;">No Room Items products available</p>'; return; }
-    grid.innerHTML = products.map((p, i) => `<div class="product-card" onclick="openProduct(products[${i}])"><div class="product-image"><img src="${escapeHtml(p.images[0])}" alt="${escapeHtml(p.name)}" onerror="this.parentElement.innerHTML='📦'"></div><div class="product-info"><div class="product-name">${escapeHtml(p.name)}</div><div class="product-price">${escapeHtml(p.price)}</div><button class="add-to-cart-btn" onclick="event.stopPropagation();addToCart('${escapeHtml(p.name)}','${escapeHtml(p.price)}','${escapeHtml(p.emoji)}')">Add to Cart</button></div></div>`).join('');
+    grid.innerHTML = products.map((p, i) => `<div class="product-card" onclick="openProduct(products[${i}])"><div class="product-image"><img src="${escapeHtml(p.images[0])}" alt="${escapeHtml(p.name)}" onerror="this.parentElement.innerHTML='📦'"></div><div class="product-info"><div class="product-name">${escapeHtml(p.name)}</div><div class="product-price">${escapeHtml(p.price)}</div><button class="add-to-cart-btn" onclick="event.stopPropagation();addToCart('${escapeHtml(p.name)}','${escapeHtml(p.price)}','${escapeHtml(p.emoji)}',products[${i}])">Add to Cart</button></div></div>`).join('');
 }
 
 document.addEventListener('DOMContentLoaded', () => { loadProducts(); updateCartCount(); });

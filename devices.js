@@ -43,7 +43,17 @@ function addToCart(productName, price, emoji) {
     let cart = JSON.parse(localStorage.getItem('sokohubCart')) || [];
     const existing = cart.find(i => i.name === productName);
     if (existing) existing.quantity++;
-    else cart.push({ name: productName, price, emoji, quantity: 1 });
+    else const itemData = {
+                name: productName,
+                price: price,
+                emoji: emoji,
+                images: product?.images || ['sokohub.jpg'],
+                description: product?.description || '',
+                whatsapp: product?.whatsapp || '',
+                category: product?.category || '',
+                quantity: 1
+            };
+            cart.push(itemData);
     localStorage.setItem('sokohubCart', JSON.stringify(cart));
     showToast('Added to cart!');
     updateCartCount();
@@ -84,7 +94,7 @@ function renderProducts() {
             <div class="product-info">
                 <div class="product-name">${escapeHtml(p.name)}</div>
                 <div class="product-price">${escapeHtml(p.price)}</div>
-                <button class="add-to-cart-btn" onclick="event.stopPropagation();addToCart('${escapeHtml(p.name)}','${escapeHtml(p.price)}','${escapeHtml(p.emoji)}')">Add to Cart</button>
+                <button class="add-to-cart-btn" onclick="event.stopPropagation();addToCart('${escapeHtml(p.name)}','${escapeHtml(p.price)}','${escapeHtml(p.emoji)}',products[${i}])">Add to Cart</button>
             </div>
         </div>
     `).join('');

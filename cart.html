@@ -75,7 +75,31 @@
     <script>
         let cart = JSON.parse(localStorage.getItem('sokohubCart')) || [];
 
-        function renderCart() {
+        function goToProduct(index) {
+    const item = cart[index];
+    if (!item) return;
+    const params = new URLSearchParams();
+    params.set('name', item.name || 'Product');
+    params.set('price', item.price || 'Ksh 0');
+    params.set('desc', item.description || item.desc || '');
+    
+    // Handle images - could be array, string, or single value
+    let images = 'sokohub.jpg';
+    if (item.images) {
+        if (Array.isArray(item.images)) {
+            images = item.images.filter(img => img).join(',') || 'sokohub.jpg';
+        } else if (typeof item.images === 'string') {
+            images = item.images;
+        }
+    }
+    params.set('images', images);
+    
+    if (item.whatsapp) params.set('whatsapp', item.whatsapp);
+    if (item.category) params.set('category', item.category);
+    window.location.href = 'product.html?' + params.toString();
+}
+
+function renderCart() {
             const list = document.getElementById('cartList');
             const empty = document.getElementById('emptyState');
             updateCartCount();
@@ -90,8 +114,10 @@
             empty.style.display = 'none';
 
             list.innerHTML = cart.map((item, i) => `
-                <div class="cart-card">
-                    <div class="cart-emoji">${item.emoji || '📦'}</div>
+                <div class="cart-card" onclick="goToProduct(${i})" style="cursor:pointer">
+                    <div class="cart-emoji">
+                        ${item.images && item.images[0] ? `<img src="${item.images[0]}" alt="${item.name}" onerror="this.parentElement.innerHTML='📦'" style="width:100%;height:100%;object-fit:cover;">` : (item.emoji || '📦')}
+                    </div>
                     <div class="cart-details">
                         <div class="cart-name">${item.name}</div>
                         <div class="cart-price">${item.price}</div>
