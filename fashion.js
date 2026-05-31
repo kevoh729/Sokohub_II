@@ -39,21 +39,24 @@ function openProduct(prod) {
     window.location.href = 'product.html?' + params.toString();
 }
 
-function addToCart(productName, price, emoji) {
+function addToCart(productName, price, emoji, product) {
     let cart = JSON.parse(localStorage.getItem('sokohubCart')) || [];
     const existing = cart.find(i => i.name === productName);
-    if (existing) existing.quantity++;
-    else const itemData = {
-                name: productName,
-                price: price,
-                emoji: emoji,
-                images: product?.images || ['sokohub.jpg'],
-                description: product?.description || '',
-                whatsapp: product?.whatsapp || '',
-                category: product?.category || '',
-                quantity: 1
-            };
-            cart.push(itemData);
+    if (existing) {
+        existing.quantity = (existing.quantity || 1) + 1;
+    } else {
+        const itemData = {
+            name: productName,
+            price: price,
+            emoji: emoji,
+            images: product?.images || ['sokohub.jpg'],
+            description: product?.description || '',
+            whatsapp: product?.whatsapp || '',
+            category: product?.category || '',
+            quantity: 1
+        };
+        cart.push(itemData);
+    }
     localStorage.setItem('sokohubCart', JSON.stringify(cart));
     showToast('Added to cart!');
     updateCartCount();

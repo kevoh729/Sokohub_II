@@ -93,7 +93,7 @@ function renderProducts() {
         button.addEventListener('click', (event) => {
             event.stopPropagation();
             const product = products[Number(button.dataset.cartIndex)];
-            addToCart(product.name, product.price, product.emoji || '📦');
+            addToCart(product.name, product.price, product.emoji || '📦', product);
         });
     });
 }
