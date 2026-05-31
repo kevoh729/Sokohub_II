@@ -1,85 +1,96 @@
-let categoryProducts = [];
+let products = [];
+const API_BASE = '';
 
-function showToast(message) {
-    const toast = document.createElement('div');
-    toast.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#16803a;color:white;padding:14px 24px;border-radius:8px;font-weight:600;z-index:9999;animation:slideIn 0.3s ease,fadeOut 0.3s ease 2.7s forwards;box-shadow:0 4px 15px rgba(0,0,0,0.2)';
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
-}
-
-async function loadFashionProducts() {
+async function loadProducts() {
     try {
-        const response = await fetch('/api/products');
+        const response = await fetch(API_BASE + '/api/products?category=Fashion');
         if (response.ok) {
             const data = await response.json();
-            categoryProducts = (data || []).map(p => ({
+            products = data.map(p => ({
                 name: p.name,
-                price: 'Ksh ' + Number(p.price || 0).toLocaleString('en-KE'),
+                price: 'Ksh ' + Number(p.price || 0).toLocaleString(),
                 emoji: '📦',
-                category: p.category || 'Fashion',
-                subcategory: p.category || 'Fashion'
+                description: p.description || '',
+                images: (() => {
+                    if (p.image_url) {
+                        try { const imgs = JSON.parse(p.image_url); if (Array.isArray(imgs)) return imgs; }
+                        catch { return [p.image_url]; }
+                    }
+                    return ['sokohub.jpg'];
+                })(),
+                whatsapp: p.whatsapp || '',
+                category: p.category || 'Fashion'
             }));
+            renderProducts();
         }
-    } catch (error) {
-        console.log('No products available');
+    } catch (e) {
+        document.getElementById('productsGrid').innerHTML = '<p style="text-align:center;padding:40px;color:#888;">Failed to load products</p>';
     }
-    renderProducts();
 }
 
-function renderProducts(category = 'All') {
-    const grid = document.getElementById('productsGrid');
-    if (!grid) return;
-    
-    const filtered = category === 'All' ? categoryProducts : categoryProducts.filter(p => p.category === category || p.subcategory === category);
-    
-    if (filtered.length === 0) {
-        grid.innerHTML = '<p style="text-align:center;padding:40px;color:#888;">No products available in this category.</p>';
-        return;
-    }
-    
-    grid.innerHTML = filtered.map((prod, i) => `
-        <div class="product-card" data-product-index="${i}">
-            <div class="product-image">${prod.emoji}</div>
-            <div class="product-info">
-                <div class="product-name">${prod.name}</div>
-                <div class="product-price">${prod.price}</div>
-                <button class="add-to-cart-btn" data-cart-index="${i}">Add to Cart</button>
-            </div>
-        </div>
-    `).join('');
-
-    grid.querySelectorAll('.add-to-cart-btn').forEach((btn) => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const product = categoryProducts[Number(btn.dataset.cartIndex)];
-            addToCart(product.name, product.price, product.emoji);
-        });
-    });
-}
-
-function filterCategory(element) {
-    document.querySelectorAll('.category-chip').forEach(chip => chip.classList.remove('active'));
-    element.classList.add('active');
-    renderProducts(element.textContent);
+function openProduct(prod) {
+    const params = new URLSearchParams();
+    params.set('name', prod.name);
+    params.set('price', prod.price);
+    params.set('desc', prod.description || '');
+    params.set('images', (prod.images || []).join(','));
+    params.set('category', prod.category || 'Fashion');
+    if (prod.whatsapp) params.set('whatsapp', prod.whatsapp);
+    window.location.href = 'product.html?' + params.toString();
 }
 
 function addToCart(productName, price, emoji) {
     let cart = JSON.parse(localStorage.getItem('sokohubCart')) || [];
-    const existing = cart.find(item => item.name === productName);
-    if (existing) {
-        existing.quantity = (existing.quantity || 1) + 1;
-    } else {
-        cart.push({ name: productName, price: price, emoji: emoji, quantity: 1 });
-    }
+    const existing = cart.find(i => i.name === productName);
+    if (existing) existing.quantity++;
+    else cart.push({ name: productName, price, emoji, quantity: 1 });
     localStorage.setItem('sokohubCart', JSON.stringify(cart));
     showToast('Added to cart!');
+    updateCartCount();
 }
 
-function shopNow() {
-    document.getElementById('productsGrid')?.scrollIntoView({ behavior: 'smooth' });
+function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('sokohubCart')) || [];
+    const count = cart.reduce((s, i) => s + (i.quantity || 1), 0);
+    const el = document.getElementById('cartCount');
+    if (el) el.textContent = count > 0 ? count : '';
+}
+
+function showToast(msg) {
+    const t = document.createElement('div');
+    t.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#16803a;color:white;padding:12px 20px;border-radius:8px;font-weight:600;z-index:9999';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function renderProducts() {
+    const grid = document.getElementById('productsGrid');
+    if (!grid) return;
+    if (products.length === 0) {
+        grid.innerHTML = '<p style="text-align:center;padding:40px;color:#888;">No Fashion products available</p>';
+        return;
+    }
+    grid.innerHTML = products.map((p, i) => `
+        <div class="product-card" onclick="openProduct(products[${i}])">
+            <div class="product-image">
+                <img src="${escapeHtml(p.images[0])}" alt="${escapeHtml(p.name)}" onerror="this.parentElement.innerHTML='📦'">
+            </div>
+            <div class="product-info">
+                <div class="product-name">${escapeHtml(p.name)}</div>
+                <div class="product-price">${escapeHtml(p.price)}</div>
+                <button class="add-to-cart-btn" onclick="event.stopPropagation();addToCart('${escapeHtml(p.name)}','${escapeHtml(p.price)}','${escapeHtml(p.emoji)}')">Add to Cart</button>
+            </div>
+        </div>
+    `).join('');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadFashionProducts();
+    loadProducts();
+    updateCartCount();
 });
