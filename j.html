@@ -84,6 +84,7 @@
             <button class="tab active" onclick="showTab('products')">My Products</button>
             <button class="tab" onclick="showTab('add')">Add New</button>
             <button class="tab" onclick="showTab('profile')">Profile</button>
+            
         </div>
 
         <div id="tab-products" class="tab-content active">
@@ -215,6 +216,15 @@
             event?.target?.classList.add('active');
             document.getElementById('tab-' + tab).classList.add('active');
             if (tab === 'products') loadMyProducts();
+    
+    function showTab(tab) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        event?.target?.classList.add('active');
+        document.getElementById('tab-' + tab).classList.add('active');
+        if (tab === 'products') loadMyProducts();
+        if (tab === 'profile') loadProfile();
+    }
             if (tab === 'profile') loadProfile();
         }
 
@@ -367,6 +377,15 @@
                 showMsg('success', 'Product updated!');
                 closeEditModal();
                 loadMyProducts();
+    
+    function showTab(tab) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        event?.target?.classList.add('active');
+        document.getElementById('tab-' + tab).classList.add('active');
+        if (tab === 'products') loadMyProducts();
+        if (tab === 'profile') loadProfile();
+    }
             } else {
                 showMsg('error', data.error || 'Update failed');
             }
@@ -380,6 +399,15 @@
             const data = await res.json();
             if (data.success) {
                 loadMyProducts();
+    
+    function showTab(tab) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        event?.target?.classList.add('active');
+        document.getElementById('tab-' + tab).classList.add('active');
+        if (tab === 'products') loadMyProducts();
+        if (tab === 'profile') loadProfile();
+    }
             } else {
                 showMsg('error', data.error || 'Failed to toggle');
             }
@@ -397,6 +425,15 @@
             if (data.success) {
                 showMsg('success', 'Product deleted');
                 loadMyProducts();
+    
+    function showTab(tab) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        event?.target?.classList.add('active');
+        document.getElementById('tab-' + tab).classList.add('active');
+        if (tab === 'products') loadMyProducts();
+        if (tab === 'profile') loadProfile();
+    }
             } else {
                 showMsg('error', data.error || 'Delete failed');
             }
@@ -450,6 +487,25 @@
         }
 
         loadMyProducts();
+    
+    function showTab(tab) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        event?.target?.classList.add('active');
+        document.getElementById('tab-' + tab).classList.add('active');
+        if (tab === 'products') loadMyProducts();
+        if (tab === 'profile') loadProfile();
+    }
+    loadMyProducts();
+    
+    function showTab(tab) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        event?.target?.classList.add('active');
+        document.getElementById('tab-' + tab).classList.add('active');
+        if (tab === 'products') loadMyProducts();
+        if (tab === 'profile') loadProfile();
+    }
     </script>
 </body>
 </html>

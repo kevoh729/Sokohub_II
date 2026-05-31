@@ -583,3 +583,178 @@ app.patch('/api/products/:id/toggle', verifyToken, async (req, res) => {
     res.status(500).json({ error: 'Failed to toggle product' });
   }
 });
+
+// ============ INTEREST TRACKING ============
+// Track when someone clicks WhatsApp on a product
+app.post('/api/track-interest', async (req, res) => {
+    const { productId, sellerId, productName, buyerInfo } = req.body;
+    
+    try {
+        await pool.query(
+            'INSERT INTO interests (product_id, seller_id, product_name, buyer_info, created_at) VALUES ($1, $2, $3, $4, NOW())',
+            [productId || null, sellerId || null, productName || '', buyerInfo || '', req.ip]
+        );
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Tracking failed' });
+    }
+});
+
+
+
+// ============ INTEREST TRACKING ============
+app.post('/api/track-interest', async (req, res) => {
+    const { productId, sellerId, productName, buyerInfo } = req.body;
+    try {
+        await pool.query(
+            'INSERT INTO interests (product_id, seller_id, product_name, buyer_info, created_at) VALUES ($1, $2, $3, $4, NOW())',
+            [productId || null, sellerId || null, productName || '', buyerInfo || '', req.ip]
+        );
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Tracking failed' });
+    }
+});
+
+app.get('/api/notifications', verifyToken, async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT * FROM interests WHERE seller_id = $1 ORDER BY created_at DESC LIMIT 50',
+            [req.sellerId]
+        );
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to load notifications' });
+    }
+});
+
+pool.query(`CREATE TABLE IF NOT EXISTS interests (
+    id SERIAL PRIMARY KEY,
+    product_id INTEGER,
+    seller_id INTEGER,
+    product_name VARCHAR(255),
+    buyer_info TEXT,
+    ip_address VARCHAR(45),
+    is_read BOOLEAN DEFAULT false,
+    created_at TIMESTAMP DEFAULT NOW()
+})`).catch(() => {});
+
+// ============ INTEREST TRACKING ============
+app.post('/api/track-interest', async (req, res) => {
+    const { productId, sellerId, productName, buyerInfo } = req.body;
+    try {
+        await pool.query(
+            'INSERT INTO interests (product_id, seller_id, product_name, buyer_info, created_at) VALUES ($1, $2, $3, $4, NOW())',
+            [productId || null, sellerId || null, productName || '', buyerInfo || '', req.ip]
+        );
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Tracking failed' });
+    }
+});
+
+app.get('/api/notifications', verifyToken, async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT * FROM interests WHERE seller_id = $1 ORDER BY created_at DESC LIMIT 50',
+            [req.sellerId]
+        );
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to load notifications' });
+    }
+});
+
+pool.query(`CREATE TABLE IF NOT EXISTS interests (
+    id SERIAL PRIMARY KEY,
+    product_id INTEGER,
+    seller_id INTEGER,
+    product_name VARCHAR(255),
+    buyer_info TEXT,
+    ip_address VARCHAR(45),
+    is_read BOOLEAN DEFAULT false,
+    created_at TIMESTAMP DEFAULT NOW()
+})`).catch(() => {});
+
+// ============ ADMIN NOTIFICATIONS ============
+// Site owner gets notified of ALL WhatsApp clicks
+
+app.post('/api/track-interest', async (req, res) => {
+    const { productName, productId, sellerId } = req.body;
+    
+    try {
+        await pool.query(
+            'INSERT INTO admin_notifications (product_name, product_id, seller_id, created_at) VALUES ($1, $2, $3, NOW())',
+            [productName || '', productId || null, sellerId || null]
+        );
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Tracking failed' });
+    }
+});
+
+// Get ALL notifications (admin only) - requires admin email from env
+app.get('/api/admin/notifications', async (req, res) => {
+    const adminKey = req.headers['x-admin-key'];
+    const expectedKey = process.env.ADMIN_SECRET || 'sokohub-admin-2024';
+    
+    if (adminKey !== expectedKey) {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    
+    try {
+        const result = await pool.query(
+            'SELECT * FROM admin_notifications ORDER BY created_at DESC LIMIT 100'
+        );
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to load notifications' });
+    }
+});
+
+// Create admin_notifications table
+pool.query(`CREATE TABLE IF NOT EXISTS admin_notifications (
+    id SERIAL PRIMARY KEY,
+    product_name VARCHAR(255),
+    product_id INTEGER,
+    seller_id INTEGER,
+    created_at TIMESTAMP DEFAULT NOW()
+})`).catch(() => {});
+
+// ============ ADMIN NOTIFICATIONS ============
+app.post('/api/track-interest', async (req, res) => {
+    const { productName, productId, sellerId } = req.body;
+    try {
+        await pool.query(
+            'INSERT INTO admin_notifications (product_name, product_id, seller_id, created_at) VALUES ($1, $2, $3, NOW())',
+            [productName || '', productId || null, sellerId || null]
+        );
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Tracking failed' });
+    }
+});
+
+app.get('/api/admin/notifications', async (req, res) => {
+    const adminKey = req.headers['x-admin-key'];
+    const expectedKey = process.env.ADMIN_SECRET || 'sokohub-admin-2024';
+    if (adminKey !== expectedKey) {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    try {
+        const result = await pool.query(
+            'SELECT * FROM admin_notifications ORDER BY created_at DESC LIMIT 100'
+        );
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to load notifications' });
+    }
+});
+
+pool.query(`CREATE TABLE IF NOT EXISTS admin_notifications (
+    id SERIAL PRIMARY KEY,
+    product_name VARCHAR(255),
+    product_id INTEGER,
+    seller_id INTEGER,
+    created_at TIMESTAMP DEFAULT NOW()
+})`).catch(() => {});
