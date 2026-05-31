@@ -335,6 +335,15 @@
             if (whatsapp) {
                 const message = `Hello! I'm interested in "${name}" (${price}) listed on SokoHub. Is it still available?`;
                 document.getElementById('whatsappLink').href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(message)}`;
+                
+                // Track WhatsApp click for analytics
+                document.getElementById('whatsappLink').onclick = function() {
+                    fetch('/api/track', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ type: 'whatsapp_click', data: { productName: name } })
+                    });
+                };
             } else {
                 document.getElementById('whatsappLink').style.display = 'none';
             }

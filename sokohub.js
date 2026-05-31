@@ -54,6 +54,13 @@ async function loadSellerProducts() {
 }
 
 function openProduct(prod) {
+    // Track product view
+    fetch('/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'product_view', data: { productName: prod.name } })
+    }).catch(() => {});
+    
     const params = new URLSearchParams();
     params.set('name', prod.name);
     params.set('price', prod.price);
@@ -201,4 +208,11 @@ function shopNow() { document.getElementById('productsGrid')?.scrollIntoView({ b
 document.addEventListener('DOMContentLoaded', () => {
     updateCartCount();
     loadSellerProducts();
+    
+    // Track page view
+    fetch('/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'page_view', data: { page: window.location.pathname } })
+    }).catch(() => {});
 });

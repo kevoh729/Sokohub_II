@@ -758,3 +758,111 @@ pool.query(`CREATE TABLE IF NOT EXISTS admin_notifications (
     seller_id INTEGER,
     created_at TIMESTAMP DEFAULT NOW()
 })`).catch(() => {});
+
+// ============ ANALYTICS TRACKING ============
+app.post('/api/track', async (req, res) => {
+    const { type, data } = req.body;
+    try {
+        await pool.query(
+            'INSERT INTO analytics (event_type, event_data, ip_address, created_at) VALUES ($1, $2, $3, NOW())',
+            [type || 'unknown', JSON.stringify(data || {}), req.ip]
+        );
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Tracking failed' });
+    }
+});
+
+app.get('/api/admin/analytics', async (req, res) => {
+    const adminKey = req.headers['x-admin-key'];
+    const expectedKey = process.env.ADMIN_SECRET || 'sokohub-admin-2024';
+    if (adminKey !== expectedKey) {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    try {
+        const result = await pool.query(
+            'SELECT event_type, COUNT(*) as count FROM analytics GROUP BY event_type ORDER BY count DESC'
+        );
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to load analytics' });
+    }
+});
+
+app.get('/api/admin/all-analytics', async (req, res) => {
+    const adminKey = req.headers['x-admin-key'];
+    const expectedKey = process.env.ADMIN_SECRET || 'sokohub-admin-2024';
+    if (adminKey !== expectedKey) {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    try {
+        const result = await pool.query(
+            'SELECT * FROM analytics ORDER BY created_at DESC LIMIT 200'
+        );
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to load analytics' });
+    }
+});
+
+pool.query(`CREATE TABLE IF NOT EXISTS analytics (
+    id SERIAL PRIMARY KEY,
+    event_type VARCHAR(50),
+    event_data TEXT,
+    ip_address VARCHAR(45),
+    created_at TIMESTAMP DEFAULT NOW()
+})`).catch(() => {});
+
+// ============ ANALYTICS TRACKING ============
+app.post('/api/track', async (req, res) => {
+    const { type, data } = req.body;
+    try {
+        await pool.query(
+            'INSERT INTO analytics (event_type, event_data, ip_address, created_at) VALUES ($1, $2, $3, NOW())',
+            [type || 'unknown', JSON.stringify(data || {}), req.ip]
+        );
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Tracking failed' });
+    }
+});
+
+app.get('/api/admin/analytics', async (req, res) => {
+    const adminKey = req.headers['x-admin-key'];
+    const expectedKey = process.env.ADMIN_SECRET || 'sokohub-admin-2024';
+    if (adminKey !== expectedKey) {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    try {
+        const result = await pool.query(
+            'SELECT event_type, COUNT(*) as count FROM analytics GROUP BY event_type ORDER BY count DESC'
+        );
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to load analytics' });
+    }
+});
+
+app.get('/api/admin/all-analytics', async (req, res) => {
+    const adminKey = req.headers['x-admin-key'];
+    const expectedKey = process.env.ADMIN_SECRET || 'sokohub-admin-2024';
+    if (adminKey !== expectedKey) {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    try {
+        const result = await pool.query(
+            'SELECT * FROM analytics ORDER BY created_at DESC LIMIT 200'
+        );
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to load analytics' });
+    }
+});
+
+pool.query(`CREATE TABLE IF NOT EXISTS analytics (
+    id SERIAL PRIMARY KEY,
+    event_type VARCHAR(50),
+    event_data TEXT,
+    ip_address VARCHAR(45),
+    created_at TIMESTAMP DEFAULT NOW()
+})`).catch(() => {});

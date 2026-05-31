@@ -3,95 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - SokoHub Notifications</title>
+    <title>Admin - SokoHub Analytics</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Poppins', sans-serif; background: #f6f7f9; min-height: 100vh; }
-        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
         .header { background: white; padding: 24px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .header h1 { color: #B11226; font-size: 28px; margin-bottom: 8px; }
         .header p { color: #666; }
-        .notification-card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 4px solid #B11226; }
-        .notification-card h3 { color: #222; margin-bottom: 8px; }
-        .notification-card .meta { color: #888; font-size: 13px; }
-        .notification-card .product { color: #B11226; font-weight: 600; }
-        .badge { background: #B11226; color: white; padding: 4px 12px; border-radius: 20px; font-size: 14px; }
-        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
-        .stat-box { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .stat-box .number { font-size: 36px; font-weight: 700; color: #B11226; }
-        .stat-box .label { color: #888; font-size: 14px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-box { background: white; padding: 24px; border-radius: 12px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .stat-box .icon { font-size: 36px; margin-bottom: 8px; }
+        .stat-box .number { font-size: 42px; font-weight: 700; color: #B11226; }
+        .stat-box .label { color: #888; font-size: 14px; margin-top: 4px; }
+        .section { background: white; padding: 24px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .section h2 { color: #222; margin-bottom: 16px; font-size: 20px; }
+        .event-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+        .event-item:last-child { border-bottom: none; }
+        .event-item .type { font-weight: 600; color: #333; }
+        .event-item .count { background: #B11226; color: white; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+        .timeline { padding: 12px 0; }
+        .timeline-item { padding: 12px; background: #f9f9f9; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .timeline-item .event { font-weight: 600; color: #222; }
+        .timeline-item .time { color: #888; font-size: 12px; }
+        .timeline-item .whatsapp { color: #25D366; }
+        .timeline-item .view { color: #B11226; }
+        .timeline-item .page { color: #666; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .badge-whatsapp { background: #dcfce7; color: #25D366; }
+        .badge-view { background: #fee2e2; color: #B11226; }
+        .badge-page { background: #f0f0f0; color: #666; }
         .empty { text-align: center; padding: 60px; color: #888; }
-        @media (max-width: 768px) { .stats { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 480px) { .stats-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>📊 SokoHub Admin</h1>
-            <p>All WhatsApp clicks from all sellers</p>
+            <p>Your marketplace analytics - all site activity</p>
         </div>
         
-        <div class="stats">
+        <div class="stats-grid">
             <div class="stat-box">
-                <div class="number" id="totalClicks">0</div>
-                <div class="label">Total Clicks</div>
+                <div class="icon">👁️</div>
+                <div class="number" id="totalViews">0</div>
+                <div class="label">Page Views</div>
             </div>
             <div class="stat-box">
+                <div class="icon">📦</div>
+                <div class="number" id="productViews">0</div>
+                <div class="label">Product Views</div>
+            </div>
+            <div class="stat-box">
+                <div class="icon">💬</div>
+                <div class="number" id="whatsappClicks">0</div>
+                <div class="label">WhatsApp Clicks</div>
+            </div>
+            <div class="stat-box">
+                <div class="icon">📅</div>
                 <div class="number" id="todayClicks">0</div>
-                <div class="label">Today</div>
-            </div>
-            <div class="stat-box">
-                <div class="number" id="uniqueProducts">0</div>
-                <div class="label">Products Viewed</div>
+                <div class="label">Activity Today</div>
             </div>
         </div>
         
-        <div id="notifications"></div>
+        <div class="section">
+            <h2>📈 Activity Breakdown</h2>
+            <div id="breakdown"></div>
+        </div>
+        
+        <div class="section">
+            <h2>🕐 Recent Activity</h2>
+            <div id="timeline"></div>
+        </div>
     </div>
     
     <script>
         const ADMIN_KEY = 'sokohub-admin-2024';
         
-        async function loadNotifications() {
-            const res = await fetch('/api/admin/notifications', {
+        async function loadAnalytics() {
+            const res = await fetch('/api/admin/all-analytics', {
                 headers: { 'x-admin-key': ADMIN_KEY }
             });
             
             if (res.status === 403) {
-                document.getElementById('notifications').innerHTML = '<div class="empty">Invalid admin key. Please contact support.</div>';
+                document.getElementById('timeline').innerHTML = '<div class="empty">Access denied</div>';
                 return;
             }
             
             const data = await res.json();
             
-            // Update stats
-            document.getElementById('totalClicks').textContent = data.length;
+            // Stats
+            const pageViews = data.filter(n => n.event_type === 'page_view').length;
+            const productViews = data.filter(n => n.event_type === 'product_view').length;
+            const whatsappClicks = data.filter(n => n.event_type === 'whatsapp_click').length;
             
             const today = new Date().toDateString();
             const todayCount = data.filter(n => new Date(n.created_at).toDateString() === today).length;
+            
+            document.getElementById('totalViews').textContent = pageViews;
+            document.getElementById('productViews').textContent = productViews;
+            document.getElementById('whatsappClicks').textContent = whatsappClicks;
             document.getElementById('todayClicks').textContent = todayCount;
             
-            const unique = new Set(data.map(n => n.product_name)).size;
-            document.getElementById('uniqueProducts').textContent = unique;
+            // Breakdown
+            const breakdown = {
+                'page_view': pageViews,
+                'product_view': productViews,
+                'whatsapp_click': whatsappClicks
+            };
             
-            // Show notifications
+            let breakdownHTML = '';
+            for (const [type, count] of Object.entries(breakdown)) {
+                const label = type === 'page_view' ? 'Page Views' : type === 'product_view' ? 'Product Views' : 'WhatsApp Clicks';
+                breakdownHTML += `
+                    <div class="event-item">
+                        <span class="type">${label}</span>
+                        <span class="count">${count}</span>
+                    </div>
+                `;
+            }
+            document.getElementById('breakdown').innerHTML = breakdownHTML || '<div class="empty">No data yet</div>';
+            
+            // Timeline
             if (data.length === 0) {
-                document.getElementById('notifications').innerHTML = '<div class="empty">No notifications yet. Someone will click WhatsApp soon!</div>';
+                document.getElementById('timeline').innerHTML = '<div class="empty">No activity yet. Activity will appear here as people browse your site!</div>';
                 return;
             }
             
-            document.getElementById('notifications').innerHTML = data.map(n => `
-                <div class="notification-card">
-                    <h3>💬 WhatsApp Clicked!</h3>
-                    <div class="product">${n.product_name || 'Unknown Product'}</div>
-                    <div class="meta">${new Date(n.created_at).toLocaleString()}</div>
-                </div>
-            `).join('');
+            document.getElementById('timeline').innerHTML = data.slice(0, 50).map(n => {
+                let label, badgeClass, icon;
+                if (n.event_type === 'whatsapp_click') {
+                    label = 'WhatsApp clicked on ' + (JSON.parse(n.event_data || '{}').productName || 'product');
+                    badgeClass = 'badge-whatsapp';
+                    icon = '💬';
+                } else if (n.event_type === 'product_view') {
+                    label = 'Product viewed: ' + (JSON.parse(n.event_data || '{}').productName || 'unknown');
+                    badgeClass = 'badge-view';
+                    icon = '👁️';
+                } else {
+                    label = 'Page visited';
+                    badgeClass = 'badge-page';
+                    icon = '🌐';
+                }
+                return `
+                    <div class="timeline-item">
+                        <span class="event">${icon} ${label}</span>
+                        <span class="time">${new Date(n.created_at).toLocaleString()}</span>
+                    </div>
+                `;
+            }).join('');
         }
         
-        loadNotifications();
-        setInterval(loadNotifications, 30000); // Refresh every 30 seconds
+        loadAnalytics();
+        setInterval(loadAnalytics, 30000); // Refresh every 30 seconds
     </script>
 </body>
 </html>
