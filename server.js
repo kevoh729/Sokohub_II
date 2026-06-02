@@ -262,8 +262,8 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.get(['/login', '/login.html', '/goin.html', '/seller-login'], (req, res) => {
-  res.sendFile(path.join(__dirname, 'goin.html'));
+app.get(['/login', '/login.html', '/seller-login'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'login.html'));
 });
 
 app.get(['/dashboard', '/server_dashboard.html', '/sellersprofile'], (req, res) => {
@@ -493,6 +493,25 @@ app.put('/api/auth/change-password', verifyToken, async (req, res) => {
         res.json({ success: true, message: 'Password changed successfully' });
     } catch (err) {
         res.status(500).json({ error: 'Password change failed' });
+    }
+});
+
+// Delete seller account (cascade via foreign keys)
+app.delete('/api/auth/account', verifyToken, async (req, res) => {
+    const sellerId = req.sellerId;
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        await client.query('DELETE FROM products WHERE seller_id = $1', [sellerId]);
+        await client.query('DELETE FROM sessions WHERE seller_id = $1', [sellerId]);
+        await client.query('DELETE FROM sellers WHERE id = $1', [sellerId]);
+        await client.query('COMMIT');
+        res.json({ success: true, message: 'Account deleted' });
+    } catch (err) {
+        await client.query('ROLLBACK');
+        res.status(500).json({ error: 'Failed to delete account: ' + err.message });
+    } finally {
+        client.release();
     }
 });
 

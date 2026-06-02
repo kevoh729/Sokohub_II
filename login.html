@@ -3,13 +3,247 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - SokoHub</title>
-  <meta http-equiv="refresh" content="0; url=goin.html">
-  <script>
-    window.location.replace('goin.html');
-  </script>
+  <title>SokoHub Seller Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="sokohub.css">
+  <script src="https://accounts.google.com/gsi/client" async></script>
+  <style>
+    body { min-height: 100vh; background: #f6f7f9; }
+    .auth-shell { width: min(480px, calc(100% - 32px)); margin: 48px auto; background: white; border: 1px solid #f0f0f0; border-radius: 8px; padding: 28px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06); }
+    @media (max-width: 480px) {
+        .auth-shell { margin: 24px auto; padding: 20px; }
+        .auth-tabs { margin-bottom: 16px; }
+        .auth-tab { padding: 10px; font-size: 14px; }
+        .form-field { margin-bottom: 12px; }
+        .form-field input { padding: 10px; }
+        .auth-submit { padding: 12px; }
+    }
+    .auth-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 24px; }
+    .auth-tab { border: 1px solid #e5e5e5; background: #f8f8f8; border-radius: 8px; padding: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+    .auth-tab.active { background: #B11226; border-color: #B11226; color: white; }
+    .auth-form { display: none; }
+    .auth-form.active { display: block; }
+    .form-field { margin-bottom: 14px; }
+    .form-field label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
+    .form-field input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font: inherit; box-sizing: border-box; }
+    .form-field input:focus { outline: none; border-color: #B11226; }
+    .auth-submit { width: 100%; padding: 13px; border: 0; border-radius: 8px; background: #B11226; color: white; font-weight: 800; cursor: pointer; margin-top: 4px; font-size: 15px; transition: all 0.2s; }
+    .auth-submit:hover { background: #8a0d1f; }
+    .auth-submit:disabled { background: #ccc; cursor: not-allowed; }
+    .auth-message { min-height: 22px; margin-top: 14px; font-size: 14px; font-weight: 600; padding: 10px; border-radius: 8px; text-align: center; }
+    .auth-message.success { background: #dcfce7; color: #16803a; }
+    .auth-message.error { background: #fee2e2; color: #B11226; }
+    .google-divider { text-align: center; margin: 20px 0 16px; position: relative; color: #888; font-size: 13px; }
+    .google-divider::before, .google-divider::after { content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: #e5e5e5; }
+    .google-divider::before { left: 0; }
+    .google-divider::after { right: 0; }
+    .google-btn-wrapper { display: flex; justify-content: center; margin: 16px 0; }
+    .or-divider { text-align: center; margin: 20px 0 16px; color: #888; font-size: 13px; font-weight: 600; }
+  </style>
 </head>
 <body>
-  <p>Opening seller login...</p>
+  <header>
+    <div class="header-top">
+      <div class="logo"><a href="/"><img src="sokohub.jpg" alt="SokoHub logo" class="site-logo"></a></div>
+      <div class="header-icons">
+        <a href="index.html" class="header-btn home-btn">Home</a>
+        <a href="login.html" class="header-btn account-btn">Sign In</a>
+        <a href="cart.html" class="header-btn cart-btn">Cart</a>
+      </div>
+    </div>
+  </header>
+  <main class="auth-shell">
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="signin-tab">Sign In</button>
+      <button class="auth-tab" id="signup-tab">Sign Up</button>
+    </div>
+    
+    <form id="signin-form" class="auth-form active">
+      <h2 style="margin-bottom: 6px;">Welcome back</h2>
+      <p style="margin-bottom: 20px; color: #666; font-size: 14px;">Sign in to manage your products.</p>
+      
+      <div class="google-btn-wrapper">
+        <div id="googleSignInBtn"></div>
+      </div>
+      <div class="or-divider">OR SIGN IN WITH EMAIL</div>
+      
+      <div class="form-field"><label for="signin-email">Email</label><input id="signin-email" type="email" placeholder="you@example.com" required pattern="[^\s@]+@[^\s@]+\.[^\s@]+" title="Enter a valid email"></div>
+      <div class="form-field"><label for="signin-password">Password</label><input id="signin-password" type="password" placeholder="Your password" required></div>
+      <button class="auth-submit" type="submit" id="signin-btn">Sign In</button>
+      <div id="signin-message" class="auth-message"></div>
+    </form>
+    
+    <form id="signup-form" class="auth-form">
+      <h2 style="margin-bottom: 6px;">Create Account</h2>
+      <p style="margin-bottom: 20px; color: #666; font-size: 14px;">Start selling on SokoHub.</p>
+      
+      <div class="google-btn-wrapper">
+        <div id="googleSignUpBtn"></div>
+      </div>
+      <div class="or-divider">OR SIGN UP WITH EMAIL</div>
+      
+      <div class="form-field"><label for="signup-name">Full Name</label><input id="signup-name" type="text" placeholder="Your name" required></div>
+      <div class="form-field"><label for="signup-email">Email</label><input id="signup-email" type="email" placeholder="you@example.com" required pattern="[^\s@]+@[^\s@]+\.[^\s@]+" title="Enter a valid email"></div>
+      <div class="form-field"><label for="signup-whatsapp">WhatsApp (optional)</label><input id="signup-whatsapp" type="tel" placeholder="+254712345678" pattern="\+?[0-9]{7,15}" title="Enter valid phone like +254712345678"></div>
+      <div class="form-field"><label for="signup-password">Password</label><input id="signup-password" type="password" placeholder="Min 6 characters" minlength="6" required></div>
+      <button class="auth-submit" type="submit" id="signup-btn">Create Account</button>
+      <div id="signup-message" class="auth-message"></div>
+    </form>
+  </main>
+  
+  <script>
+    // Change this to your Railway URL when hosting
+    const API_BASE = 'https://sokohubii-production.up.railway.app';
+    
+    const GOOGLE_CLIENT_ID = '874860608695-tnutaoj7mdpa2mp2547fubiucjbq1ihm.apps.googleusercontent.com';
+    
+    function showForm(formName) { 
+      const showSignup = formName === 'signup'; 
+      document.getElementById('signin-form').classList.toggle('active', !showSignup); 
+      document.getElementById('signup-form').classList.toggle('active', showSignup); 
+      document.getElementById('signin-tab').classList.toggle('active', !showSignup); 
+      document.getElementById('signup-tab').classList.toggle('active', showSignup); 
+    }
+    
+    function storeUser(email, name, token, sellerId, whatsapp) {
+      localStorage.setItem('userEmail', email);
+      localStorage.setItem('userName', name || email || 'Seller');
+      localStorage.setItem('token', token);
+      localStorage.setItem('sellerId', sellerId);
+      if (whatsapp) localStorage.setItem('whatsapp', whatsapp);
+    }
+    
+    function setMessage(msgId, message, type) {
+      const el = document.getElementById(msgId);
+      if (!el) return;
+      el.textContent = message;
+      el.className = 'auth-message ' + type;
+    }
+    
+    function setLoading(btnId, loading) {
+      const btn = document.getElementById(btnId);
+      if (btn) {
+        btn.disabled = loading;
+        btn.textContent = loading ? 'Please wait...' : (btnId === 'signin-btn' ? 'Sign In' : 'Create Account');
+      }
+    }
+    
+    function handleGoogleResponse(response) {
+      const googleToken = response.credential;
+      fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: googleToken })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          storeUser(data.email, data.name, data.token, data.sellerId, data.whatsapp);
+          window.location.href = '/server_dashboard.html';
+        } else if (data.needsSignup) {
+          localStorage.setItem('tempToken', data.tempToken);
+          localStorage.setItem('tempEmail', data.email);
+          localStorage.setItem('tempName', data.name);
+          window.location.href = '/complete-signup.html';
+        } else {
+          setMessage('signin-message', data.error || 'Google sign in failed', 'error');
+        }
+      })
+      .catch(() => setMessage('signin-message', 'Network error. Please try again.', 'error'));
+    }
+    
+    // Email/Password Sign In
+    document.getElementById('signin-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('signin-email').value.trim();
+      const password = document.getElementById('signin-password').value;
+      
+      if (!email || !password) {
+        setMessage('signin-message', 'Please fill in all fields', 'error');
+        return;
+      }
+      
+      setLoading('signin-btn', true);
+      setMessage('signin-message', '', '');
+      
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          storeUser(data.email, data.name, data.token, data.sellerId, data.whatsapp);
+          setMessage('signin-message', 'Login successful! Redirecting...', 'success');
+          window.location.href = '/server_dashboard.html';
+        } else {
+          setMessage('signin-message', data.error || 'Login failed', 'error');
+        }
+      } catch {
+        setMessage('signin-message', 'Network error. Please try again.', 'error');
+      }
+      
+      setLoading('signin-btn', false);
+    });
+    
+    // Email/Password Sign Up
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('signup-name').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const whatsapp = document.getElementById('signup-whatsapp').value.trim();
+      const password = document.getElementById('signup-password').value;
+      
+      if (!name || !email || !password) {
+        setMessage('signup-message', 'Please fill in all required fields', 'error');
+        return;
+      }
+      
+      if (password.length < 6) {
+        setMessage('signup-message', 'Password must be at least 6 characters', 'error');
+        return;
+      }
+      
+      setLoading('signup-btn', true);
+      setMessage('signup-message', '', '');
+      
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, whatsapp, password })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          storeUser(data.email, data.name, data.token, data.sellerId, data.whatsapp);
+          setMessage('signup-message', 'Account created! Redirecting...', 'success');
+          window.location.href = '/server_dashboard.html';
+        } else {
+          setMessage('signup-message', data.error || 'Registration failed', 'error');
+        }
+      } catch {
+        setMessage('signup-message', 'Network error. Please try again.', 'error');
+      }
+      
+      setLoading('signup-btn', false);
+    });
+    
+    document.getElementById('signin-tab').addEventListener('click', () => showForm('signin'));
+    document.getElementById('signup-tab').addEventListener('click', () => showForm('signup'));
+    
+    window.onload = () => {
+      if (typeof google !== 'undefined' && google.accounts) {
+        google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleGoogleResponse });
+        google.accounts.id.renderButton(document.getElementById('googleSignInBtn'), { theme: 'outline', size: 'large', width: '100%' });
+        google.accounts.id.renderButton(document.getElementById('googleSignUpBtn'), { theme: 'outline', size: 'large', width: '100%' });
+      }
+      if (new URLSearchParams(window.location.search).get('tab') === 'signup') showForm('signup');
+    };
+  </script>
 </body>
 </html>

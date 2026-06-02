@@ -1007,3 +1007,103 @@ footer {
         height: 200px;
     }
 }
+
+
+/* ============ Category Horizontal Rows ============ */
+.cat-section {
+    padding: 24px 0;
+    border-bottom: 8px solid #f0f0f0;
+}
+
+.cat-section-hd {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+    margin-bottom: 12px;
+}
+
+.cat-section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #222;
+}
+
+.cat-see-all {
+    font-size: 13px;
+    font-weight: 600;
+    color: #B11226;
+    text-decoration: none;
+}
+
+.cat-row {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 0 16px 12px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.cat-row::-webkit-scrollbar { height: 4px; }
+.cat-row::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+.cat-card {
+    flex: 0 0 160px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    cursor: pointer;
+    scroll-snap-align: start;
+    overflow: hidden;
+}
+
+.cat-card-img {
+    width: 160px;
+    height: 160px;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-size: 48px;
+}
+
+.cat-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.cat-card-info { padding: 10px; }
+
+.cat-card-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #222;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+}
+
+.cat-card-price {
+    font-size: 13px;
+    font-weight: 700;
+    color: #B11226;
+}
+
+@media (min-width: 640px) {
+    .cat-card { flex: 0 0 200px; }
+    .cat-card-img { width: 200px; height: 200px; }
+}
+
+@media (min-width: 1024px) {
+    .cat-card { flex: 0 0 240px; }
+    .cat-card-img { width: 240px; height: 240px; }
+    .cat-section { max-width: 1200px; margin: 0 auto; padding: 30px 0; }
+    .cat-section-hd, .cat-row { padding-left: 0; padding-right: 0; }
+    .cat-row { gap: 16px; }
+}
+

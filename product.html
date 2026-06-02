@@ -204,7 +204,7 @@
         <div class="header-top">
             <div class="logo"><a href="index.html"><img src="sokohub.jpg" alt="SokoHub logo" class="site-logo"></a></div>
             <div class="header-icons">
-                <a href="goin.html" class="header-btn account-btn">Account</a>
+                <a href="login.html" class="header-btn account-btn">Account</a>
                 <a href="cart.html" class="header-btn cart-btn">Cart <span id="cartCount" class="cart-badge"></span></a>
             </div>
         </div>
@@ -287,6 +287,56 @@
             });
         }
 
+
+        async function loadById(id) {
+            try {
+                var res = await fetch('/api/products');
+                var all = await res.json();
+                if (!Array.isArray(all)) return null;
+                for (var i = 0; i < all.length; i++) { if (all[i].id == id) return all[i]; }
+                return null;
+            } catch(e) { return null; }
+        }
+
+        async function initProduct() {
+            var pid = getParam('id');
+            if (pid) {
+                var prod = await loadById(pid);
+                if (prod) {
+                    document.getElementById('productName').textContent = prod.name || 'Product';
+                    document.getElementById('productPrice').textContent = 'KES ' + Number(prod.price || 0).toFixed(2);
+                    document.getElementById('productDesc').textContent = prod.description || 'No description available.';
+                    var catEl = document.getElementById('productCategory');
+                    if (catEl) {
+                        catEl.textContent = prod.category ? prod.category.charAt(0).toUpperCase() + prod.category.slice(1) : '';
+                        if (!prod.category) catEl.style.display = 'none';
+                    }
+                    var images = (prod.images && prod.images[0]) ? prod.images : (prod.image_url ? [prod.image_url] : []);
+                    productImages = images.length ? images : ['sokohub.jpg'];
+                    document.getElementById('productImage').src = productImages[0];
+                    document.getElementById('productImage').onerror = function() {
+                        this.style.display = 'none';
+                        document.getElementById('mainImage').innerHTML = '<span style="font-size:100px">&#128230;</span>';
+                    };
+                    var thumbsContainer = document.getElementById('thumbnails');
+                    var thumbsHtml = '';
+                    for (var i = 0; i < productImages.length; i++) {
+                        thumbsHtml += '<div class="thumb' + (i===0?' active':'') + '" onclick="setMainImage(' + i + ')"><img src="' + productImages[i] + '" alt="Image ' + (i+1) + '"></div>';
+                    }
+                    thumbsContainer.innerHTML = thumbsHtml;
+                    document.getElementById('sellerName').textContent = prod.seller_name || 'SokoHub Seller';
+                    document.getElementById('sellerInitial').textContent = (prod.seller_name || 'S').charAt(0).toUpperCase();
+                    var whatsappLink = document.getElementById('whatsappLink');
+                    if (whatsappLink && prod.whatsapp) {
+                        whatsappLink.href = 'https://wa.me/' + prod.whatsapp.replace(/\+/g,'') + '?text=' + encodeURIComponent('I am interested in ' + (prod.name || 'this product'));
+                    }
+                    return;
+                }
+            }
+            setupProduct();
+        }
+        initProduct();
+
         function setupProduct() {
             try {
             const name = decodeURIComponent(getParam('name')) || 'Product';
@@ -356,7 +406,6 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             updateCartCount();
-            setupProduct();
         });
     </script>
 </body>
