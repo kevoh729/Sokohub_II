@@ -103,7 +103,7 @@
   
   <script>
     // Change this to your Railway URL when hosting
-    const API_BASE = 'https://sokohubii-production.up.railway.app';
+    const API_BASE = '';
     
     const GOOGLE_CLIENT_ID = '874860608695-tnutaoj7mdpa2mp2547fubiucjbq1ihm.apps.googleusercontent.com';
     
@@ -137,7 +137,6 @@
         btn.textContent = loading ? 'Please wait...' : (btnId === 'signin-btn' ? 'Sign In' : 'Create Account');
       }
     }
-    
     function handleGoogleResponse(response) {
       const googleToken = response.credential;
       fetch('/api/auth/google', {
@@ -149,7 +148,7 @@
       .then(data => {
         if (data.success) {
           storeUser(data.email, data.name, data.token, data.sellerId, data.whatsapp);
-          window.location.href = '/server_dashboard.html';
+          window.location.href = '/dashboard';
         } else if (data.needsSignup) {
           localStorage.setItem('tempToken', data.tempToken);
           localStorage.setItem('tempEmail', data.email);
@@ -161,21 +160,20 @@
       })
       .catch(() => setMessage('signin-message', 'Network error. Please try again.', 'error'));
     }
-    
+
+
     // Email/Password Sign In
     document.getElementById('signin-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('signin-email').value.trim();
-      const password = document.getElementById('signin-password').value;
-      
-      if (!email || !password) {
-        setMessage('signin-message', 'Please fill in all fields', 'error');
-        return;
-      }
-      
       setLoading('signin-btn', true);
       setMessage('signin-message', '', '');
-      
+      const email = document.getElementById('signin-email').value.trim();
+      const password = document.getElementById('signin-password').value;
+      if (!email || !password) {
+        setMessage('signin-message', 'Please fill in all fields', 'error');
+        setLoading('signin-btn', false);
+        return;
+      }
       try {
         const res = await fetch('/api/auth/login', {
           method: 'POST',
@@ -183,18 +181,16 @@
           body: JSON.stringify({ email, password })
         });
         const data = await res.json();
-        
         if (data.success) {
           storeUser(data.email, data.name, data.token, data.sellerId, data.whatsapp);
           setMessage('signin-message', 'Login successful! Redirecting...', 'success');
-          window.location.href = '/server_dashboard.html';
+          window.location.href = '/dashboard';
         } else {
           setMessage('signin-message', data.error || 'Login failed', 'error');
         }
       } catch {
         setMessage('signin-message', 'Network error. Please try again.', 'error');
       }
-      
       setLoading('signin-btn', false);
     });
     
@@ -237,7 +233,7 @@
         if (data.success) {
           storeUser(data.email, data.name, data.token, data.sellerId, data.whatsapp);
           setMessage('signup-message', 'Account created! Redirecting...', 'success');
-          window.location.href = '/server_dashboard.html';
+          window.location.href = '/dashboard';
         } else {
           setMessage('signup-message', data.error || 'Registration failed', 'error');
         }

@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const multer = require('multer');
 const { Pool } = require('pg');
 const { OAuth2Client } = require('google-auth-library');
@@ -28,43 +29,7 @@ app.use(express.static(path.join(__dirname)));
 
 // ============ MAINTENANCE MODE ============
 let maintenanceMode = false;
-const maintenancePage = `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Under Maintenance - SokoHub</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .container { text-align: center; padding: 40px; max-width: 500px; }
-        .icon { font-size: 80px; margin-bottom: 20px; animation: bounce 2s infinite; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        h1 { color: white; font-size: 42px; margin-bottom: 12px; }
-        p { color: rgba(255,255,255,0.9); font-size: 16px; line-height: 1.6; margin-bottom: 24px; }
-        .eta { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; color: white; margin-top: 24px; }
-        .eta strong { display: block; margin-bottom: 8px; }
-        .contact { margin-top: 30px; font-size: 14px; color: rgba(255,255,255,0.8); }
-        .contact a { color: white; text-decoration: none; font-weight: 600; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="icon">🔧</div>
-        <h1>We're Under Maintenance</h1>
-        <p>SokoHub is getting some exciting updates to serve you better. We'll be back online very soon!</p>
-        <div class="eta">
-            <strong>⏱️ Expected time:</strong>
-            Thank you for your patience. Check back in a few hours!
-        </div>
-        <div class="contact">
-            For urgent inquiries, email us at <a href="mailto:sokohub205@gmail.com">sokohub205@gmail.com</a>
-        </div>
-    </div>
-</body>
-</html>
-`;
+const maintenancePage = fs.readFileSync(path.join(__dirname, 'maintenance.html'), 'utf-8');
 
 app.use((req, res, next) => {
     if (maintenanceMode && !req.path.startsWith('/api/') && req.path !== '/admin' && !req.path.startsWith('/admin.')) {
