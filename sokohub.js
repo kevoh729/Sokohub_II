@@ -1,7 +1,7 @@
 let products = [];
 
 // API Base URL - Change this to your Railway URL when hosting
-const API_BASE = 'https://sokohubii-production.up.railway.app'; 
+const API_BASE = ''; 
 
 // Helper for API calls
 async function apiCall(endpoint, options = {}) {
