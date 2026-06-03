@@ -32,7 +32,7 @@
         <a href="houseitems.html" class="category-chip">House Items</a>
         <a href="rentals.html" class="category-chip">Rentals</a>
         <a href="studyessentials.html" class="category-chip">Study Essentials</a>
-        <a href="roomitems.html" class="category-chip">Room Items</a>
+        <a href="services.html" class="category-chip">Services</a>
     </div>
 
     <section class="hero">
@@ -61,7 +61,7 @@
     <script src="sokohub.js"></script>
 <script>
 (async function(){
-var CATS=[{key:"devices",label:"Electronics"},{key:"fashion",label:"Fashion"},{key:"foodanddrinks",label:"Food & Drinks"},{key:"houseitems",label:"House Items"},{key:"studyessentials",label:"Study Essentials"},{key:"roomitems",label:"Room Items"}];
+var CATS=[{key:"devices",label:"Electronics"},{key:"fashion",label:"Fashion"},{key:"foodanddrinks",label:"Food & Drinks"},{key:"houseitems",label:"House Items"},{key:"studyessentials",label:"Study Essentials"},{key:"services",label:"Services"}];
 function e(v){return String(v||"").replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':'&quot;','"':'&#39;'}[c];});}
 function card(p){
     var img = p.image_url || (p.images && p.images[0]) || '';
@@ -89,6 +89,7 @@ try{
     var g={}; CATS.forEach(function(x){ g[x.key]=[]; });
     var keyMap = {};
     CATS.forEach(function(x){ keyMap[norm(x.key)] = x.key; keyMap[norm(x.label)] = x.key; });
+    keyMap[norm('Room Items')] = 'services';
     ps.forEach(function(p){ var k = norm(p.category); var mapped = keyMap[k]; if(mapped) g[mapped].push(p); });
 
     var h="";

@@ -3,20 +3,30 @@ const API_BASE = '';
 
 async function loadProducts() {
     try {
-        const response = await fetch(API_BASE + '/api/products?category=Services');
+        let response = await fetch(API_BASE + '/api/products?category=Services');
+        let data = [];
         if (response.ok) {
-            const data = await response.json();
-            products = data.map(p => ({
-                name: p.name,
-                price: 'Ksh ' + Number(p.price || 0).toLocaleString(),
-                emoji: '📦',
-                description: p.description || '',
-                images: (() => { if (p.image_url) { try { const imgs = JSON.parse(p.image_url); if (Array.isArray(imgs)) return imgs; } catch { return [p.image_url]; } } return ['sokohub.jpg']; })(),
-                whatsapp: p.whatsapp || '',
-                category: p.category || 'Services'
-            }));
-            renderProducts();
+            data = await response.json();
         }
+        if (!Array.isArray(data) || data.length === 0) {
+            const fallbackResponse = await fetch(API_BASE + '/api/products?category=Room+Items');
+            if (fallbackResponse.ok) {
+                const fallbackData = await fallbackResponse.json();
+                if (Array.isArray(fallbackData) && fallbackData.length) {
+                    data = fallbackData;
+                }
+            }
+        }
+        products = data.map(p => ({
+            name: p.name,
+            price: 'Ksh ' + Number(p.price || 0).toLocaleString(),
+            emoji: '📦',
+            description: p.description || '',
+            images: (() => { if (p.image_url) { try { const imgs = JSON.parse(p.image_url); if (Array.isArray(imgs)) return imgs; } catch { return [p.image_url]; } } return ['sokohub.jpg']; })(),
+            whatsapp: p.whatsapp || '',
+            category: p.category || 'Services'
+        }));
+        renderProducts();
     } catch (e) { document.getElementById('productsGrid').innerHTML = '<p style="text-align:center;padding:40px;color:#888;">Failed to load services</p>'; }
 }
 

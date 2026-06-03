@@ -195,7 +195,7 @@ const CATEGORIES = [
         { name: 'Stapler Heavy Duty 100-Sheet', price: 1500, desc: 'Office grade, includes 500 staples' },
         { name: 'Ring Binder 70mm 10-Pack', price: 600, desc: 'Black, 4 finger hole, 12-month calendar' }
     ]},
-    { key: 'roomitems', label: 'Room Items', products: [
+    { key: 'services', label: 'Services', products: [
         { name: 'Smart Light Bulb RGB 4-Pack', price: 1800, desc: 'Wi-Fi, 16M colors, voice control, 10W' },
         { name: 'LED Strip Lights 5M', price: 1200, desc: 'App control, music sync, self-adhesive' },
         { name: 'Nightstand 2-Drawer', price: 4500, desc: 'Solid wood, Scandinavian design, 2 colors' },
