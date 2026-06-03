@@ -62,7 +62,7 @@
 (async function(){
 var CATS=[{key:"devices",label:"Electronics"},{key:"fashion",label:"Fashion"},{key:"foodanddrinks",label:"Food & Drinks"},{key:"houseitems",label:"House Items"},{key:"rentals",label:"Rentals"},{key:"studyessentials",label:"Study Essentials"},{key:"roomitems",label:"Room Items"}];
 function e(v){return String(v||"").replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':'&quot;','"':'&#39;'}[c];});}
-function card(p){var i=p.images&&p.images[0]?'<img src="'+e(p.images[0])+'" alt="'+e(p.name)+'" onerror="this.parentElement.innerHTML=“⚑️”">':'⚑️';return'<div class="cat-card" onclick="window.location.href=“product.html?id='+p.id+'”"><div class="cat-card-img">'+i+'</div><div class="cat-card-info"><div class="cat-card-name">'+e(p.name)+'</div><div class="cat-card-price">KES '+Number(p.price).toFixed(2)+'</div></div></div>';}
+function card(p){var i=p.images&&p.images[0]?'<img src="'+e(p.images[0])+'" alt="'+e(p.name)+'" onerror="this.parentElement.innerHTML=\'⚑️\'">':'⚑️';return'<div class="cat-card" onclick="window.location.href=\'product.html?id='+encodeURIComponent(p.id)+'\'"><div class="cat-card-img">'+i+'</div><div class="cat-card-info"><div class="cat-card-name">'+e(p.name)+'</div><div class="cat-card-price">KES '+Number(p.price).toFixed(2)+'</div></div></div>';}
 var container=document.getElementById('categoryRows');
 try{
 var r=await fetch('/api/products');
