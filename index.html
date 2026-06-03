@@ -77,10 +77,14 @@ function card(p){
 }
 
 var container=document.getElementById('categoryRows');
+var allProductsGrid=document.getElementById('productsGrid');
 try{
     var r=await fetch('/api/products');
     var ps=await r.json();
     if(!Array.isArray(ps)) ps = [];
+    
+    if(allProductsGrid) allProductsGrid.innerHTML = ps.map(card).join('') || '<div class="cat-empty" style="padding:40px;text-align:center;grid-column:1/-1;">No products available</div>';
+    
     function norm(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,''); }
     var g={}; CATS.forEach(function(x){ g[x.key]=[]; });
     var keyMap = {};
