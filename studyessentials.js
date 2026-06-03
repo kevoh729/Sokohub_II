@@ -20,7 +20,7 @@ async function loadProducts() {
     } catch (e) { document.getElementById('productsGrid').innerHTML = '<p style="text-align:center;padding:40px;color:#888;">Failed to load products</p>'; }
 }
 
-function openProduct(prod) { const params = new URLSearchParams(); params.set('name', prod.name); params.set('price', prod.price); params.set('desc', prod.description || ''); params.set('images', (prod.images || []).join(',')); params.set('category', prod.category || 'Study Essentials'); if (prod.whatsapp) params.set('whatsapp', prod.whatsapp); window.location.href = 'product.html?' + params.toString(); }
+function openProduct(prod) { fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'product_view', data: { productName: prod.name } }) }).catch(() => {}); const params = new URLSearchParams(); params.set('name', prod.name); params.set('price', prod.price); params.set('desc', prod.description || ''); params.set('images', (prod.images || []).join(',')); params.set('category', prod.category || 'Study Essentials'); if (prod.whatsapp) params.set('whatsapp', prod.whatsapp); window.location.href = 'product.html?' + params.toString(); }
 
 function addToCart(productName, price, emoji, product) { let cart = JSON.parse(localStorage.getItem('sokohubCart')) || []; const existing = cart.find(i => i.name === productName); if (existing) existing.quantity++; else const itemData = {
                 name: productName,
@@ -47,4 +47,4 @@ function renderProducts() {
     grid.innerHTML = products.map((p, i) => `<div class="product-card" onclick="openProduct(products[${i}])"><div class="product-image"><img src="${escapeHtml(p.images[0])}" alt="${escapeHtml(p.name)}" onerror="this.parentElement.innerHTML='📦'"></div><div class="product-info"><div class="product-name">${escapeHtml(p.name)}</div><div class="product-price">${escapeHtml(p.price)}</div><button class="add-to-cart-btn" onclick="event.stopPropagation();addToCart('${escapeHtml(p.name)}','${escapeHtml(p.price)}','${escapeHtml(p.emoji)}',products[${i}])">Add to Cart</button></div></div>`).join('');
 }
 
-document.addEventListener('DOMContentLoaded', () => { loadProducts(); updateCartCount(); });
+document.addEventListener('DOMContentLoaded', () => { loadProducts(); updateCartCount(); fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'page_view', data: { page: 'studyessentials.html' } }) }).catch(() => {}); });

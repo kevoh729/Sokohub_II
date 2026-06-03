@@ -362,6 +362,7 @@
                     if (whatsappLink && prod.whatsapp) {
                         whatsappLink.href = 'https://wa.me/' + prod.whatsapp.replace(/\+/g,'') + '?text=' + encodeURIComponent('I am interested in ' + (prod.name || 'this product'));
                     }
+                    fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'product_view', data: { productName: prod.name } }) }).catch(() => {});
                     return;
                 }
             }
@@ -446,6 +447,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             updateCartCount();
+            fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'page_view', data: { page: 'product.html' } }) }).catch(() => {});
         });
     </script>
 </body>
