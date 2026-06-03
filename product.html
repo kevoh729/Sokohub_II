@@ -301,6 +301,23 @@
             });
         }
 
+        function parseImageArray(value) {
+            if (!value) return [];
+            if (Array.isArray(value)) return value.filter(Boolean);
+            if (typeof value === 'string') {
+                var trimmed = value.trim();
+                if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+                    try {
+                        var parsed = JSON.parse(trimmed);
+                        if (Array.isArray(parsed)) return parsed.filter(Boolean);
+                    } catch (e) {
+                        // continue to fallback
+                    }
+                }
+                return [trimmed];
+            }
+            return [];
+        }
 
         async function loadById(id) {
             try {
@@ -325,7 +342,8 @@
                         catEl.textContent = prod.category ? prod.category.charAt(0).toUpperCase() + prod.category.slice(1) : '';
                         if (!prod.category) catEl.style.display = 'none';
                     }
-                    var images = (prod.images && prod.images[0]) ? prod.images : (prod.image_url ? [prod.image_url] : []);
+                    var images = parseImageArray(prod.images);
+                    if (!images.length) images = parseImageArray(prod.image_url);
                     productImages = images.length ? images : ['sokohub.jpg'];
                     document.getElementById('productImage').src = productImages[0];
                     document.getElementById('productImage').onerror = function() {
@@ -361,8 +379,16 @@
             const whatsapp = getParam('whatsapp') || '';
             const seller = decodeURIComponent(getParam('seller')) || 'SokoHub Seller';
 
-            // Parse multiple images
-            productImages = imagesParam ? imagesParam.split(',').filter(img => img.trim()) : ['sokohub.jpg'];
+            function parseQueryImages(value) {
+                if (!value) return [];
+                try {
+                    var parsed = JSON.parse(value);
+                    if (Array.isArray(parsed)) return parsed.filter(Boolean);
+                } catch (e) {}
+                return value.split(',').map(img => img.trim()).filter(Boolean);
+            }
+
+            productImages = parseQueryImages(imagesParam);
             if (productImages.length === 0) productImages = ['sokohub.jpg'];
 
             document.getElementById('productName').textContent = name;

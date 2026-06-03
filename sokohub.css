@@ -187,6 +187,7 @@
             padding: 16px 20px;
             scroll-behavior: smooth;
             background: #f9f9f9;
+            touch-action: pan-x pan-y;
         }
 
         .categories::-webkit-scrollbar {
@@ -507,7 +508,7 @@ footer {
     }
     
     .site-logo {
-        max-height: 50px;
+        max-height: 70px;
     }
     
     .logo {
@@ -1055,7 +1056,7 @@ footer {
     padding: 0 16px 16px;
     scroll-snap-type: x proximity;
     -webkit-overflow-scrolling: touch;
-    touch-action: pan-x;
+    touch-action: pan-x pan-y;
 }
 
 .cat-row::-webkit-scrollbar { height: 6px; }
