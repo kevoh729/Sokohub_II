@@ -70,7 +70,17 @@
         </div>
         
         <div class="section">
-            <h2>📈 Activity Breakdown</h2>
+            <h2>� Maintenance Mode</h2>
+            <div id="maintenanceControl" style="display: flex; align-items: center; gap: 20px; padding: 12px; background: #f9f9f9; border-radius: 8px;">
+                <div style="flex: 1;">
+                    <p id="maintenanceStatus" style="font-weight: 600; margin-bottom: 4px;">Status: <span id="statusText" style="color: #16803a;">🟢 Online</span></p>
+                    <p style="color: #666; font-size: 13px;">Toggle maintenance mode to work on big updates.</p>
+                </div>
+                <button id="toggleMaintenanceBtn" style="padding: 12px 24px; background: #B11226; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap;">Enable Maintenance</button>
+            </div>
+        </div>
+        
+        <div class="section">
             <div id="breakdown"></div>
         </div>
         
@@ -83,6 +93,62 @@
     <script>
         const ADMIN_KEY = 'sokohub-admin-2024';
         
+        // ============ MAINTENANCE MODE ============
+        async function checkMaintenanceStatus() {
+            try {
+                const res = await fetch('/api/admin/maintenance-status', {
+                    headers: { 'x-admin-key': ADMIN_KEY }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    updateMaintenanceUI(data.maintenanceMode);
+                }
+            } catch (err) { console.error('Failed to check maintenance status'); }
+        }
+        
+        function updateMaintenanceUI(isEnabled) {
+            const btn = document.getElementById('toggleMaintenanceBtn');
+            const statusText = document.getElementById('statusText');
+            if (isEnabled) {
+                btn.textContent = 'Disable Maintenance';
+                btn.style.background = '#16803a';
+                statusText.textContent = '🔴 Under Maintenance';
+                statusText.style.color = '#B11226';
+            } else {
+                btn.textContent = 'Enable Maintenance';
+                btn.style.background = '#B11226';
+                statusText.textContent = '🟢 Online';
+                statusText.style.color = '#16803a';
+            }
+        }
+        
+        document.getElementById('toggleMaintenanceBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('toggleMaintenanceBtn');
+            const currentText = btn.textContent;
+            const shouldEnable = currentText.includes('Enable');
+            
+            try {
+                const res = await fetch('/api/admin/maintenance', {
+                    method: 'POST',
+                    headers: { 'x-admin-key': ADMIN_KEY, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ enable: shouldEnable })
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    updateMaintenanceUI(data.maintenanceMode);
+                    alert(shouldEnable ? '🔧 Maintenance mode ENABLED. Site is now showing maintenance page.' : '✅ Maintenance mode DISABLED. Site is back online.');
+                } else {
+                    alert('Failed to toggle maintenance mode');
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        });
+        
+        checkMaintenanceStatus();
+        
+        // ============ ANALYTICS ============
         async function loadAnalytics() {
             const res = await fetch('/api/admin/all-analytics', {
                 headers: { 'x-admin-key': ADMIN_KEY }
