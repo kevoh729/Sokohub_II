@@ -29,6 +29,9 @@
     .form-field label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
     .form-field input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font: inherit; box-sizing: border-box; }
     .form-field input:focus { outline: none; border-color: #B11226; }
+    .phone-input-group { display: flex; gap: 8px; align-items: center; }
+    .phone-prefix { background: #f1f1f1; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-weight: 700; color: #333; }
+    .phone-input-group input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #ddd; }
     .auth-submit { width: 100%; padding: 13px; border: 0; border-radius: 8px; background: #B11226; color: white; font-weight: 800; cursor: pointer; margin-top: 4px; font-size: 15px; transition: all 0.2s; }
     .auth-submit:hover { background: #8a0d1f; }
     .auth-submit:disabled { background: #ccc; cursor: not-allowed; }
@@ -86,7 +89,12 @@
       
       <div class="form-field"><label for="signup-name">Full Name</label><input id="signup-name" type="text" placeholder="Your name" required></div>
       <div class="form-field"><label for="signup-email">Email</label><input id="signup-email" type="email" placeholder="you@example.com" required pattern="[^\s@]+@[^\s@]+\.[^\s@]+" title="Enter a valid email"></div>
-      <div class="form-field"><label for="signup-whatsapp">WhatsApp (optional)</label><input id="signup-whatsapp" type="tel" placeholder="+254712345678" pattern="\+?[0-9]{7,15}" title="Enter valid phone like +254712345678"></div>
+      <div class="form-field"><label for="signup-whatsapp-local">WhatsApp (optional)</label>
+        <div class="phone-input-group">
+          <span class="phone-prefix">+254</span>
+          <input id="signup-whatsapp-local" type="tel" placeholder="712345678" pattern="[0-9]{6,12}" title="Enter local number without country code, e.g. 712345678">
+        </div>
+      </div>
       <div class="form-field"><label for="signup-password">Password</label><input id="signup-password" type="password" placeholder="Min 6 characters" minlength="6" required></div>
       <button class="auth-submit" type="submit" id="signup-btn">Create Account</button>
       <div id="signup-message" class="auth-message"></div>
@@ -195,7 +203,14 @@
       e.preventDefault();
       const name = document.getElementById('signup-name').value.trim();
       const email = document.getElementById('signup-email').value.trim();
-      const whatsapp = document.getElementById('signup-whatsapp').value.trim();
+      const localWhats = (document.getElementById('signup-whatsapp-local') && document.getElementById('signup-whatsapp-local').value) ? document.getElementById('signup-whatsapp-local').value.trim() : '';
+      let whatsapp = '';
+      if (localWhats) {
+        // keep digits only, remove leading zeros
+        let cleaned = localWhats.replace(/\D/g, '');
+        cleaned = cleaned.replace(/^0+/, '');
+        if (cleaned) whatsapp = '+254' + cleaned;
+      }
       const password = document.getElementById('signup-password').value;
       
       if (!name || !email || !password) {

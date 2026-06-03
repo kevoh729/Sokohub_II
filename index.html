@@ -55,23 +55,50 @@
             <a href="#terms">Terms</a>
         </div>
         <p class="footer-text">&copy; 2026 SokoHub. All rights reserved.</p>
+        <p class="footer-contact">For inquiries, complaints or requests reach us at <a href="mailto:sokohub205@gmail.com">sokohub205@gmail.com</a></p>
     </footer>
 
     <script src="sokohub.js"></script>
 <script>
 (async function(){
-var CATS=[{key:"devices",label:"Electronics"},{key:"fashion",label:"Fashion"},{key:"foodanddrinks",label:"Food & Drinks"},{key:"houseitems",label:"House Items"},{key:"rentals",label:"Rentals"},{key:"studyessentials",label:"Study Essentials"},{key:"roomitems",label:"Room Items"}];
+var CATS=[{key:"devices",label:"Electronics"},{key:"fashion",label:"Fashion"},{key:"foodanddrinks",label:"Food & Drinks"},{key:"houseitems",label:"House Items"},{key:"studyessentials",label:"Study Essentials"},{key:"roomitems",label:"Room Items"}];
 function e(v){return String(v||"").replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':'&quot;','"':'&#39;'}[c];});}
-function card(p){var i=p.images&&p.images[0]?'<img src="'+e(p.images[0])+'" alt="'+e(p.name)+'" onerror="this.parentElement.innerHTML=\'⚑️\'">':'⚑️';return'<div class="cat-card" onclick="window.location.href=\'product.html?id='+encodeURIComponent(p.id)+'\'"><div class="cat-card-img">'+i+'</div><div class="cat-card-info"><div class="cat-card-name">'+e(p.name)+'</div><div class="cat-card-price">KES '+Number(p.price).toFixed(2)+'</div></div></div>';}
+function card(p){
+    var img = p.image_url || (p.images && p.images[0]) || '';
+    if(typeof img === 'string' && img.trim().startsWith('[')){
+        try{ var parsed = JSON.parse(img); if(Array.isArray(parsed) && parsed.length) img = parsed[0]; }
+        catch(e){ /* leave img as-is */ }
+    }
+    var imgHtml = img ? '<img src="'+e(img)+'" alt="'+e(p.name)+'" onerror="this.src=\'sokohub.jpg\'">' : '⚑️';
+        return '<div class="cat-card" onclick="window.location.href=\'product.html?id='+encodeURIComponent(p.id)+'\'">'
+            + '<div class="cat-card-img">'+imgHtml+'</div>'
+            + '<div class="cat-card-info"><div class="cat-card-name">'+e(p.name)+'</div>'
+            + '<div class="cat-card-price">KES '+Number(p.price||0).toFixed(2)+'</div></div></div>';
+}
+
 var container=document.getElementById('categoryRows');
 try{
-var r=await fetch('/api/products');
-var ps=await r.json();
-if(!Array.isArray(ps)||!ps.length)return;
-var g={};CATS.forEach(function(x){g[x.key]=[];});ps.forEach(function(p){var k=(p.category||"").toLowerCase();if(g[k])g[k].push(p);});
-var h="";CATS.forEach(function(x){if(!g[x.key].length)return;h+='<div class="cat-section"><div class="cat-section-hd"><span class="cat-section-title">'+x.label+'</span><a href="'+x.key+'.html" class="cat-see-all">See all</a></div><div class="cat-row">'+g[x.key].map(card).join('')+'</div></div>';});
-container.innerHTML=h;
-}catch(err){console.warn('Category rows failed:',err.message);}
+    var r=await fetch('/api/products');
+    var ps=await r.json();
+    if(!Array.isArray(ps)) ps = [];
+    function norm(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,''); }
+    var g={}; CATS.forEach(function(x){ g[x.key]=[]; });
+    var keyMap = {};
+    CATS.forEach(function(x){ keyMap[norm(x.key)] = x.key; keyMap[norm(x.label)] = x.key; });
+    ps.forEach(function(p){ var k = norm(p.category); var mapped = keyMap[k]; if(mapped) g[mapped].push(p); });
+
+    var h="";
+    CATS.forEach(function(x){
+        var items = g[x.key] || [];
+        var rowContent = items.length ? items.map(card).join('') : '<div class="cat-empty">No products yet</div>';
+        h += '<div class="cat-section">'
+            + '<div class="cat-section-hd"><span class="cat-section-title">'+x.label+'</span>'
+            + '<a href="'+x.key+'.html" class="cat-see-all">See all</a></div>'
+            + '<div class="cat-row">'+rowContent+'</div></div>';
+    });
+
+    container.innerHTML = h;
+} catch(err){ console.warn('Category rows failed:', err && err.message); }
 })();
 </script>
 </body>

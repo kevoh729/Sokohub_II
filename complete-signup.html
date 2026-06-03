@@ -48,6 +48,9 @@
       border: 1px solid #ddd;
       font: inherit;
     }
+    .phone-input-group { display:flex; gap:8px; align-items:center; }
+    .phone-prefix { background:#f1f1f1; padding:10px 12px; border:1px solid #ddd; border-radius:8px; font-weight:700; }
+    .phone-input-group input { flex:1; padding:12px; border-radius:8px; border:1px solid #ddd; }
     .submit-btn {
       width: 100%;
       padding: 13px;
@@ -83,8 +86,11 @@
         <input id="email" type="email" required>
       </div>
       <div class="form-field">
-        <label for="whatsapp">WhatsApp Number</label>
-        <input id="whatsapp" type="tel" placeholder="+254712345678" required>
+        <label for="whatsapp-local">WhatsApp Number</label>
+        <div class="phone-input-group">
+          <span class="phone-prefix">+254</span>
+          <input id="whatsapp-local" type="tel" placeholder="712345678" required>
+        </div>
       </div>
       <button class="submit-btn" type="submit">Complete Registration</button>
       <div id="form-message" class="form-message"></div>
@@ -108,11 +114,17 @@
     document.getElementById('complete-signup-form').addEventListener('submit', async (event) => {
       event.preventDefault();
       const name = document.getElementById('name').value.trim();
-      const whatsapp = document.getElementById('whatsapp').value.trim();
-      if (!/^\+?[0-9]{7,15}$/.test(whatsapp)) {
+      const local = (document.getElementById('whatsapp-local') && document.getElementById('whatsapp-local').value) ? document.getElementById('whatsapp-local').value.trim() : '';
+      let whatsapp = '';
+      if (!local) {
         setMessage('Enter a valid WhatsApp number', 'error');
         return;
       }
+      // clean and prepend +254
+      let cleaned = local.replace(/\D/g, '');
+      cleaned = cleaned.replace(/^0+/, '');
+      if (!cleaned) { setMessage('Enter a valid WhatsApp number', 'error'); return; }
+      whatsapp = '+254' + cleaned;
       try {
         setMessage('Completing registration...', 'success');
         const response = await fetch('/api/auth/complete-signup', {
