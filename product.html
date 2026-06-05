@@ -360,13 +360,7 @@
                     document.getElementById('sellerInitial').textContent = (prod.seller_name || 'S').charAt(0).toUpperCase();
                     var whatsappLink = document.getElementById('whatsappLink');
                     if (whatsappLink && prod.whatsapp) {
-                        whatsappLink.href = 'https://wa.me/' + prod.whatsapp.replace(/\+/g,'') + '?text=' + encodeURIComponent('Hello! I saw this listing on SokoHub and I am interested.
-
-Product: ' + (prod.name || 'this product') + '
-
-Is it still available? Please let me know.
-
-Thank you!');
+                        whatsappLink.href = 'https://wa.me/' + prod.whatsapp.replace(/\+/g,'') + '?text=' + encodeURIComponent('Hello! I saw this listing on SokoHub and I am interested.\n\nProduct: ' + (prod.name || 'this product') + '\n\nIs it still available? Please let me know.\n\nThank you!');
                     }
                     fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'product_view', data: { productName: prod.name } }) }).catch(() => {});
                     return;
