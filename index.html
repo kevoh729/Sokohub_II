@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="sokohub.css">
 </head>
 <body>
-    <header>
+    <header style="position: sticky; top: 0; z-index: 1000; background: #fff;">
         <div class="header-top">
             <div class="logo"><a href="index.html"><img src="sokohub.jpg" alt="SokoHub logo" class="site-logo"></a></div>
             <div class="header-icons">
@@ -18,9 +18,10 @@
                 <a href="cart.html" class="header-btn cart-btn">🛒 Cart <span id="cartCount" class="cart-badge"></span></a>
             </div>
         </div>
-        <div class="search-container">
+        <div class="search-container" style="position:relative;">
             <input type="text" id="searchInput" class="search-bar" placeholder="Search products...">
             <button class="search-btn" onclick="handleSearch()">Search</button>
+            <div id="searchDropdown" class="search-dropdown"></div>
         </div>
     </header>
 
@@ -34,11 +35,31 @@
         <a href="studyessentials.html" class="category-chip">Study Essentials</a>
         <a href="services.html" class="category-chip">Services</a>
     </div>
-
-    <section class="hero">
-        <h1>Mega Murang'a Deals</h1>
-        <p>Making Shopping Easier</p>
-        <button class="hero-btn" onclick="shopNow()">Start Shopping</button>
+    <section class="hero-banner">
+        <div class="hero-slider">
+            <div class="hero-slide active">
+                <h1>Mega Murang'a Deals</h1>
+                <p>Making Shopping Easier</p>
+                <button class="hero-btn" onclick="shopNow()">Start Shopping</button>
+            </div>
+            <div class="hero-slide">
+                <h1>New Here? Welcome! 🎉</h1>
+                <p>Discover amazing deals from local sellers</p>
+            </div>
+            <div class="hero-slide">
+                <h1>Shop Smart, Save Big 💰</h1>
+                <p>Quality products at unbeatable prices</p>
+            </div>
+            <div class="hero-slide">
+                <h1>Your One-Stop Marketplace 🛒</h1>
+                <p>From Electronics to Fashion, We've Got You</p>
+            </div>
+            <div class="hero-slide">
+                <h1>Support Local Sellers ❤️</h1>
+                <p>Every purchase supports Kenyan entrepreneurs</p>
+            </div>
+        </div>
+    </section>
     </section>
 
     <section class="category-rows" id="categoryRows"></section>
@@ -108,3 +129,54 @@ try{
 </script>
 </body>
 </html>
+
+<script>
+(function(){
+var currentSlide = 0;
+var slides, dots;
+
+function initSlider() {
+    slides = document.querySelectorAll('.hero-slide');
+    if (slides.length === 0) return;
+    
+    // Create dots
+    var slider = document.querySelector('.hero-slider');
+    if (slider) {
+        var dotsHtml = '<div class="slider-dots">';
+        slides.forEach(function(_, i) {
+            dotsHtml += '<div class="slider-dot' + (i === 0 ? ' active' : '') + '" data-index="' + i + '"></div>';
+        });
+        dotsHtml += '</div>';
+        slider.insertAdjacentHTML('afterend', dotsHtml);
+        dots = document.querySelectorAll('.slider-dot');
+        
+        // Dot click handlers
+        dots.forEach(function(dot) {
+            dot.addEventListener('click', function() {
+                goToSlide(Number(this.dataset.index));
+            });
+        });
+    }
+    
+    // Auto rotate every 4 seconds
+    setInterval(function() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        goToSlide(currentSlide);
+    }, 4000);
+}
+
+function goToSlide(index) {
+    slides.forEach(function(s, i) {
+        s.classList.toggle('active', i === index);
+    });
+    if (dots) {
+        dots.forEach(function(d, i) {
+            d.classList.toggle('active', i === index);
+        });
+    }
+    currentSlide = index;
+}
+
+document.addEventListener('DOMContentLoaded', initSlider);
+})();
+</script>

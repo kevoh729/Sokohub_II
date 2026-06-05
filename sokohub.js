@@ -152,6 +152,69 @@ function updateCartCount() {
 function goToCart() { window.location.href = 'cart.html'; }
 
 
+// Instant Search functionality
+function showInstantSearch(query) {
+    const dropdown = document.getElementById('searchDropdown');
+    if (!dropdown || !query || query.length < 2) {
+        if (dropdown) dropdown.classList.remove('active');
+        return;
+    }
+    
+    const q = query.toLowerCase();
+    const matches = products.filter(p => 
+        p.name.toLowerCase().includes(q) || 
+        (p.description || '').toLowerCase().includes(q)
+    ).slice(0, 8);
+    
+    if (matches.length === 0) {
+        dropdown.innerHTML = `
+            <div class="search-no-results">
+                <p>No products found for "${escapeHtml(query)}"</p>
+            </div>
+        `;
+        dropdown.classList.add('active');
+        return;
+    }
+    
+    let html = '<div class="search-dropdown-header">Suggestions</div>';
+    matches.forEach((prod, i) => {
+        const imgSrc = prod.images && prod.images[0] ? escapeHtml(prod.images[0]) : 'sokohub.jpg';
+        html += `
+            <div class="search-suggestion" data-index="${products.indexOf(prod)}">
+                <img src="${imgSrc}" alt="${escapeHtml(prod.name)}" class="search-suggestion-img" onerror="this.src='sokohub.jpg'">
+                <div class="search-suggestion-info">
+                    <div class="search-suggestion-name">${escapeHtml(prod.name)}</div>
+                    <div class="search-suggestion-price">${escapeHtml(prod.price)}</div>
+                </div>
+            </div>
+        `;
+    });
+    html += '<div class="search-dropdown-footer" onclick="viewAllResults()">View all results</div>';
+    
+    dropdown.innerHTML = html;
+    dropdown.classList.add('active');
+    
+    // Add click handlers
+    dropdown.querySelectorAll('.search-suggestion').forEach(el => {
+        el.addEventListener('click', () => {
+            const idx = Number(el.dataset.index);
+            openProduct(products[idx]);
+        });
+    });
+}
+
+function hideInstantSearch() {
+    const dropdown = document.getElementById('searchDropdown');
+    if (dropdown) dropdown.classList.remove('active');
+}
+
+function viewAllResults() {
+    const query = document.getElementById('searchInput')?.value || '';
+    hideInstantSearch();
+    handleSearch();
+    document.getElementById('productsGrid')?.scrollIntoView({ behavior: 'smooth' });
+}
+
 // Search functionality
 function handleSearch() {
     const query = document.getElementById('searchInput')?.value.toLowerCase() || '';
@@ -188,18 +251,30 @@ function handleSearch() {
     }
 }
 
-// Search on Enter key
+// Search event listeners
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                handleSearch();
+                viewAllResults();
             }
         });
-        // Live search
-        searchInput.addEventListener('input', () => handleSearch());
+        // Instant search on input
+        searchInput.addEventListener('input', (e) => {
+            showInstantSearch(e.target.value);
+        });
+        // Hide dropdown on blur with delay
+        searchInput.addEventListener('blur', () => {
+            setTimeout(hideInstantSearch, 200);
+        });
+        // Focus reopens if there are results
+        searchInput.addEventListener('focus', () => {
+            if (searchInput.value.length >= 2) {
+                showInstantSearch(searchInput.value);
+            }
+        });
     }
 });
 
