@@ -9,9 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="sokohub.css">
     <style>
-        .hero { background: linear-gradient(135deg, #B11226 0%, #ef4444 100%); }
-        .hero h1 { color: white; }
-        .hero p { color: rgba(255,255,255,0.9); }
+        .hero-slide { background: linear-gradient(135deg, #B11226 0%, #dc2626 50%, #ef4444 100%); animation: heroPulse 3s ease-in-out infinite; }
+        @keyframes heroPulse { 0%, 100% { box-shadow: 0 4px 20px rgba(177, 18, 38, 0.3); } 50% { box-shadow: 0 4px 35px rgba(239, 68, 68, 0.5); } }
         .category-chip.active { background: #B11226; color: white; }
         .section-title { color: #B11226; }
         .page-crumb { display: flex; gap: 8px; padding: 12px 20px; background: #f6f7f9; }
@@ -32,13 +31,61 @@
     </header>
     <div class="page-crumb"><a href="index.html">Home</a><span class="separator">›</span><span>Food & Drinks</span></div>
     <div class="categories"><a href="index.html" class="category-chip">All</a><a href="foodanddrinks.html" class="category-chip active">Food & Drinks</a></div>
-    <section class="hero"><h1>Delicious Deals</h1><p>Fresh meals and tasty snacks</p><button class="hero-btn" onclick="document.getElementById('productsGrid').scrollIntoView({behavior:'smooth'})">Start Shopping</button></section>
+    <section class="hero-banner"><div class="hero-slider"><div class="hero-slide active"><h1>Food & Drinks</h1><p>Fresh and delicious options</p><button class="hero-btn" onclick="document.getElementById('productsGrid').scrollIntoView({behavior:'smooth'})">Start Shopping</button></div><div class="hero-slide"><h1>Organic Goodness</h1><p>Healthy eating made easy</p></div><div class="hero-slide"><h1>Local Flavors</h1><p>Taste Kenya in every bite</p></div></div></section>
     <section class="products-section"><div class="section-title">Available Products</div><div class="products-grid" id="productsGrid"></div></section>
     <footer>
         <div class="footer-links"><a href="#about">About Us</a><a href="#contact">Contact</a><a href="#privacy">Privacy</a><a href="#terms">Terms</a></div>
         <p class="footer-text">&copy; 2026 SokoHub. All rights reserved.</p>
         <p class="footer-contact">For inquiries, complaints or requests reach us at <a href="mailto:sokohub205@gmail.com">sokohub205@gmail.com</a></p>
     </footer>
-    <script src="foodanddrinks.js"></script>
+    <script src="foodanddrinks.js">
+<script>
+(function(){var c=0,s,d;function i(){s=document.querySelectorAll('.hero-slide');if(s.length===0)return;var slider=document.querySelector('.hero-slider');if(slider){var h='<div class="slider-dots">';s.forEach(function(_,i){h+='<div class="slider-dot'+(i===0?' active':'')+' data-index="'+i+'"></div>';});h+='</div>';slider.insertAdjacentHTML('afterend',h);d=document.querySelectorAll('.slider-dot');d.forEach(function(dot){dot.addEventListener('click',function(){goTo(Number(this.dataset.index))});});}setInterval(function(){c=(c+1)%s.length;goTo(c);},4000);}function goTo(idx){s.forEach(function(sl,i){sl.classList.toggle('active',i===idx);});if(d){d.forEach(function(dot,i){dot.classList.toggle('active',i===idx);});}c=idx;}document.addEventListener('DOMContentLoaded',i);})();
+</script>
 </body>
+
+<script>
+(function(){
+var currentSlide = 0;
+var slides, dots;
+
+function initSlider() {
+    slides = document.querySelectorAll('.hero-slide');
+    if (slides.length === 0) return;
+    var slider = document.querySelector('.hero-slider');
+    if (slider) {
+        var dotsHtml = '<div class="slider-dots">';
+        slides.forEach(function(_, i) {
+            dotsHtml += '<div class="slider-dot' + (i === 0 ? ' active' : '') + '" data-index="' + i + '"></div>';
+        });
+        dotsHtml += '</div>';
+        slider.insertAdjacentHTML('afterend', dotsHtml);
+        dots = document.querySelectorAll('.slider-dot');
+        dots.forEach(function(dot) {
+            dot.addEventListener('click', function() {
+                goToSlide(Number(this.dataset.index));
+            });
+        });
+    }
+    setInterval(function() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        goToSlide(currentSlide);
+    }, 4000);
+}
+
+function goToSlide(index) {
+    slides.forEach(function(s, i) {
+        s.classList.toggle('active', i === index);
+    });
+    if (dots) {
+        dots.forEach(function(d, i) {
+            d.classList.toggle('active', i === index);
+        });
+    }
+    currentSlide = index;
+}
+
+document.addEventListener('DOMContentLoaded', initSlider);
+})();
+</script>
 </html>

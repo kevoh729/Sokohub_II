@@ -9,10 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="sokohub.css">
     <style>
-        .hero { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); }
-        .hero h1 { color: white; }
-        .hero p { color: rgba(255,255,255,0.9); }
-        .category-chip.active { background: #3b82f6; color: white; }
+        .hero-slide { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%); animation: heroPulse 3s ease-in-out infinite; }
+        @keyframes heroPulse { 0%, 100% { box-shadow: 0 4px 20px rgba(30, 58, 138, 0.3); } 50% { box-shadow: 0 4px 35px rgba(96, 165, 250, 0.5); } }
+        .category-chip.active { background: #3b82f6; color: white; box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
         .section-title { color: #1e3a8a; }
         .page-crumb { display: flex; gap: 8px; padding: 12px 20px; background: #f6f7f9; }
         .page-crumb a { color: #3b82f6; text-decoration: none; }
@@ -20,19 +19,36 @@
     </style>
 </head>
 <body>
-    <header>
+    <header style="position: sticky; top: 0; z-index: 1000; background: #fff;">
         <div class="header-top">
             <div class="logo"><a href="index.html"><img src="sokohub.jpg" alt="SokoHub" class="site-logo"></a></div>
             <div class="header-icons"><a href="login.html" class="header-btn account-btn">👤 Account</a><a href="cart.html" class="header-btn cart-btn">🛒 Cart <span id="cartCount" class="cart-badge"></span></a></div>
         </div>
-        <div class="search-container">
-            <input type="text" class="search-bar" placeholder="Search devices...">
-            <button class="search-btn">Search</button>
+        <div class="search-container" style="position:relative;">
+            <input type="text" id="searchInput" class="search-bar" placeholder="Search devices...">
+            <button class="search-btn" onclick="handleSearch()">Search</button>
+            <div id="searchDropdown" class="search-dropdown"></div>
         </div>
     </header>
     <div class="page-crumb"><a href="index.html">Home</a><span class="separator">›</span><span>Devices</span></div>
     <div class="categories"><a href="index.html" class="category-chip">All</a><a href="devices.html" class="category-chip active">Devices</a></div>
-    <section class="hero"><h1>Tech Essentials</h1><p>Laptops, gadgets and accessories</p><button class="hero-btn" onclick="document.getElementById('productsGrid').scrollIntoView({behavior:'smooth'})">Start Shopping</button></section>
+    <section class="hero-banner">
+        <div class="hero-slider">
+            <div class="hero-slide active">
+                <h1>Tech Essentials</h1>
+                <p>Laptops, gadgets and accessories</p>
+                <button class="hero-btn" onclick="document.getElementById('productsGrid').scrollIntoView({behavior:'smooth'})">Start Shopping</button>
+            </div>
+            <div class="hero-slide">
+                <h1>Latest Gadgets</h1>
+                <p>Stay ahead with cutting-edge technology</p>
+            </div>
+            <div class="hero-slide">
+                <h1>Best Deals on Electronics</h1>
+                <p>Quality tech at unbeatable prices</p>
+            </div>
+        </div>
+    </section>
     <section class="products-section"><div class="section-title">Available Products</div><div class="products-grid" id="productsGrid"></div></section>
     <footer>
         <div class="footer-links"><a href="#about">About Us</a><a href="#contact">Contact</a><a href="#privacy">Privacy</a><a href="#terms">Terms</a></div>
@@ -42,3 +58,47 @@
     <script src="devices.js"></script>
 </body>
 </html>
+<script>
+(function(){
+var currentSlide = 0;
+var slides, dots;
+
+function initSlider() {
+    slides = document.querySelectorAll('.hero-slide');
+    if (slides.length === 0) return;
+    var slider = document.querySelector('.hero-slider');
+    if (slider) {
+        var dotsHtml = '<div class="slider-dots">';
+        slides.forEach(function(_, i) {
+            dotsHtml += '<div class="slider-dot' + (i === 0 ? ' active' : '') + '" data-index="' + i + '"></div>';
+        });
+        dotsHtml += '</div>';
+        slider.insertAdjacentHTML('afterend', dotsHtml);
+        dots = document.querySelectorAll('.slider-dot');
+        dots.forEach(function(dot) {
+            dot.addEventListener('click', function() {
+                goToSlide(Number(this.dataset.index));
+            });
+        });
+    }
+    setInterval(function() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        goToSlide(currentSlide);
+    }, 4000);
+}
+
+function goToSlide(index) {
+    slides.forEach(function(s, i) {
+        s.classList.toggle('active', i === index);
+    });
+    if (dots) {
+        dots.forEach(function(d, i) {
+            d.classList.toggle('active', i === index);
+        });
+    }
+    currentSlide = index;
+}
+
+document.addEventListener('DOMContentLoaded', initSlider);
+})();
+</script>

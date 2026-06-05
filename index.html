@@ -118,8 +118,7 @@ try{
         var items = g[x.key] || [];
         var rowContent = items.length ? items.map(card).join('') : '<div class="cat-empty">No products yet</div>';
         h += '<div class="cat-section">'
-            + '<div class="cat-section-hd"><span class="cat-section-title">'+x.label+'</span>'
-            + '<a href="'+x.key+'.html" class="cat-see-all">See all</a></div>'
+            + '<div class="cat-section-hd"><span class="cat-section-title">'+x.label+'</span></div>'
             + '<div class="cat-row">'+rowContent+'</div></div>';
     });
 
