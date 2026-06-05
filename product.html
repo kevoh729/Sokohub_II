@@ -360,7 +360,13 @@
                     document.getElementById('sellerInitial').textContent = (prod.seller_name || 'S').charAt(0).toUpperCase();
                     var whatsappLink = document.getElementById('whatsappLink');
                     if (whatsappLink && prod.whatsapp) {
-                        whatsappLink.href = 'https://wa.me/' + prod.whatsapp.replace(/\+/g,'') + '?text=' + encodeURIComponent('I am interested in ' + (prod.name || 'this product'));
+                        whatsappLink.href = 'https://wa.me/' + prod.whatsapp.replace(/\+/g,'') + '?text=' + encodeURIComponent('Hello! I saw this listing on SokoHub and I am interested.
+
+Product: ' + (prod.name || 'this product') + '
+
+Is it still available? Please let me know.
+
+Thank you!');
                     }
                     fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'product_view', data: { productName: prod.name } }) }).catch(() => {});
                     return;
@@ -424,7 +430,15 @@
             document.getElementById('sellerInitial').textContent = seller.charAt(0).toUpperCase();
 
             if (whatsapp) {
-                const message = `Hello! I'm interested in "${name}" (${price}) listed on SokoHub. Is it still available?`;
+                const message = `Hello! I saw this on SokoHub and I am interested.
+
+📦 Product: ${name}
+💰 Price: ${price}
+📂 Category: ${category}
+
+Is this still available? Please let me know.
+
+Thank you!`;
                 document.getElementById('whatsappLink').href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(message)}`;
                 
                 // Track WhatsApp click for analytics
