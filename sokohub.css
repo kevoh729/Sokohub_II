@@ -1167,6 +1167,7 @@ footer {
 .cat-card-name { font-size: 14px; font-weight: 700; color: #222; line-height: 1.2; height: 36px; overflow: hidden; }
 
 .cat-card-price { font-size: 13px; font-weight: 700; color: #B11226; margin-top: 8px; }
+.cat-card-desc { font-size: 11px; color: #666; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .cat-empty { width: 160px; min-width: 140px; height: 170px; display:flex; align-items:center; justify-content:center; color:#777; background:#fff; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,0.04); }
 

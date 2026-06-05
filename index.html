@@ -94,7 +94,7 @@ function card(p){
         return '<div class="cat-card" onclick="window.location.href=\'product.html?id='+encodeURIComponent(p.id)+'\'">'
             + '<div class="cat-card-img">'+imgHtml+'</div>'
             + '<div class="cat-card-info"><div class="cat-card-name">'+e(p.name)+'</div>'
-            + '<div class="cat-card-price">KES '+Number(p.price||0).toFixed(2)+'</div></div></div>';
+            + '<div class="cat-card-price">KES '+Number(p.price||0).toFixed(2)+'</div><div class="cat-card-desc">'+e(p.description||'')+'</div></div></div>';
 }
 
 var container=document.getElementById('categoryRows');
