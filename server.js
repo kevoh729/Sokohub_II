@@ -699,3 +699,101 @@ pool.query(`CREATE TABLE IF NOT EXISTS analytics (
     ip_address VARCHAR(45),
     created_at TIMESTAMP DEFAULT NOW()
 })`).catch(() => {});
+
+// ============ WHATSAPP LOGIN ============
+app.post('/api/send-wa-code', async (req, res) => {
+    const { whatsapp, name } = req.body;
+    if (!whatsapp) return res.status(400).json({ success: false, error: 'WhatsApp required' });
+    const phone = whatsapp.replace(/[\+\s]/g, '').replace(/\D/g, '');
+    if (phone.length < 10) { console.log('[WA] Too short:', phone); return res.status(400).json({ success: false, error: 'Invalid phone' }); }
+    try {
+        // Check existing user
+        const existing = await pool.query('SELECT id FROM sellers WHERE whatsapp = $1', [phone]);
+        if (existing.rows.length > 0) {
+            const sellerId = existing.rows[0].id;
+            const token = crypto.randomBytes(32).toString('hex');
+            if (name) await pool.query('UPDATE sellers SET name = $1 WHERE id = $2', [name, sellerId]);
+            await pool.query('INSERT INTO sessions (seller_id, token, expires_at) VALUES ($1, $2, NOW() + INTERVAL \'30 days\')', [sellerId, token]);
+            console.log('[WhatsApp] Existing user:', sellerId);
+            return res.json({ success: true, token, sellerId, existingUser: true });
+        }
+        // New user - send code
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        await pool.query('INSERT INTO whatsapp_codes (whatsapp, code, expires_at) VALUES ($1, $2, NOW() + INTERVAL \'10 minutes\')', [phone, code]);
+        console.log('========================================');
+        console.log('🔐 CODE: ' + code + ' for +' + phone);
+        console.log('========================================');
+        res.json({ success: true, existingUser: false });
+    } catch (err) {
+        console.log('[WA] Error:', err.message);
+        res.status(500).json({ success: false, error: 'Failed' });
+    }
+});
+
+app.post('/api/verify-wa-code', async (req, res) => {
+    const { whatsapp, code, name } = req.body;
+    if (!whatsapp || !code) return res.status(400).json({ success: false, error: 'Required' });
+    const phone = whatsapp.replace(/[\+\s]/g, '').replace(/\D/g, '');
+    try {
+        const check = await pool.query('SELECT id FROM whatsapp_codes WHERE whatsapp = $1 AND code = $2 AND expires_at > NOW()', [phone, code]);
+        if (check.rows.length === 0) return res.status(400).json({ success: false, error: 'Invalid code' });
+        const seller = await pool.query('INSERT INTO sellers (whatsapp, name) VALUES ($1, $2) RETURNING id', [phone, name || null]);
+        const sellerId = seller.rows[0].id;
+        const token = crypto.randomBytes(32).toString('hex');
+        await pool.query('INSERT INTO sessions (seller_id, token, expires_at) VALUES ($1, $2, NOW() + INTERVAL \'30 days\')', [sellerId, token]);
+        await pool.query('DELETE FROM whatsapp_codes WHERE whatsapp = $1', [phone]);
+        console.log('[WA] Verified:', sellerId);
+        res.json({ success: true, token, sellerId });
+    } catch (err) {
+        console.log('[WA] Verify error:', err.message);
+        res.status(500).json({ success: false, error: 'Failed' });
+    }
+});
+
+pool.query('ALTER TABLE sellers ALTER COLUMN name DROP NOT NULL').catch(() => {});
+
+// ============ ADMIN: Delete Records ============
+app.delete('/api/admin/delete', async (req, res) => {
+    const adminKey = req.headers['x-admin-key'];
+    const expectedKey = process.env.ADMIN_SECRET || 'sokohub-admin-2024';
+    if (adminKey !== expectedKey) return res.status(403).json({ error: 'Unauthorized' });
+    const { table, where } = req.body;
+    if (!table) return res.status(400).json({ error: 'Table required' });
+    try {
+        let query = 'DELETE FROM ' + table;
+        let values = [];
+        if (where && where.id) {
+            query += ' WHERE id = $1';
+            values = [where.id];
+        }
+        const result = await pool.query(query, values);
+        res.json({ success: true, deleted: result.rowCount });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+console.log('[Admin] Delete endpoint ready');
+
+// ============ ADMIN: Delete Records ============
+app.delete('/api/admin/delete', async (req, res) => {
+    const adminKey = req.headers['x-admin-key'];
+    const expectedKey = process.env.ADMIN_SECRET || 'sokohub-admin-2024';
+    if (adminKey !== expectedKey) return res.status(403).json({ error: 'Unauthorized' });
+    const { table, where } = req.body;
+    if (!table) return res.status(400).json({ error: 'Table required' });
+    try {
+        let query = 'DELETE FROM ' + table;
+        let values = [];
+        if (where && where.id) {
+            query += ' WHERE id = $1';
+            values = [where.id];
+        }
+        const result = await pool.query(query, values);
+        res.json({ success: true, deleted: result.rowCount });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+console.log('[Admin] Delete endpoint ready');

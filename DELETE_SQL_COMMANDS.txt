@@ -1,0 +1,32 @@
+// ============ DELETE RECORDS FROM NEON DATABASE ============
+// Copy and run these in the Neon SQL Editor
+
+-- Delete a specific seller by ID
+DELETE FROM sellers WHERE id = 1;
+
+-- Delete seller by WhatsApp number
+DELETE FROM sellers WHERE whatsapp = '254712345678';
+
+-- Delete all sellers (careful!)
+DELETE FROM sellers;
+
+-- Delete a specific session by ID
+DELETE FROM sessions WHERE id = 1;
+
+-- Delete sessions for a specific seller
+DELETE FROM sessions WHERE seller_id = 1;
+
+-- Delete all sessions (expired ones will be cleared on login anyway)
+DELETE FROM sessions;
+
+-- Delete whatsapp codes (old/unused codes)
+DELETE FROM whatsapp_codes;
+
+-- Delete a specific product
+DELETE FROM products WHERE id = 1;
+
+-- Delete all products for a seller
+DELETE FROM products WHERE seller_id = 1;
+
+-- Delete orders
+DELETE FROM orders WHERE id = 1;
